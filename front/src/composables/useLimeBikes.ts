@@ -1,4 +1,4 @@
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 
 export interface LimeBike {
   bike_id: string;
@@ -36,11 +36,13 @@ export function useLimeBikes(opts?: {
   const bikes = ref<LimeBike[]>([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
+  const nextRefresh = ref(0);
 
   const pollInterval = opts?.pollInterval ?? 60000; // 60s default
   const proxyBase = opts?.proxyBase ?? '';
 
   let timer: ReturnType<typeof setTimeout> | null = null;
+  let countdownTimer: ReturnType<typeof setInterval> | null = null;
   let stopped = false;
 
   async function fetchOnce() {
@@ -80,6 +82,7 @@ export function useLimeBikes(opts?: {
 
   function scheduleNext() {
     if (stopped) return;
+    nextRefresh.value = pollInterval / 1000;
     timer = setTimeout(async () => {
       await fetchOnce();
       scheduleNext();
@@ -90,12 +93,19 @@ export function useLimeBikes(opts?: {
     stopped = false;
     await fetchOnce();
     scheduleNext();
+
+    countdownTimer = setInterval(() => {
+      if (nextRefresh.value > 0) {
+        nextRefresh.value -= 1;
+      }
+    }, 1000);
   });
 
   onUnmounted(() => {
     stopped = true;
     if (timer) clearTimeout(timer);
+    if (countdownTimer) clearInterval(countdownTimer);
   });
 
-  return { bikes, loading, error, refresh: fetchOnce };
+  return { bikes, loading, error, nextRefresh };
 }

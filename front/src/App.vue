@@ -7,12 +7,12 @@
             Vélos Lime près de toi
           </h1>
 
-          <button
-            @click="refresh()"
-            class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
-          >
-            Rafraîchir
-          </button>
+          <div class="text-right">
+            <p class="text-sm text-gray-600">
+              Prochaine mise à jour dans :
+              <strong class="font-mono">{{ nextRefresh }}s</strong>
+            </p>
+          </div>
         </div>
 
         <p class="text-sm text-gray-600 mt-2">
@@ -96,7 +96,7 @@ import { useLimeBikes } from './composables/useLimeBikes';
 const USER_LAT = 48.8811315;
 const USER_LNG = 2.3886633;
 
-const { bikes, loading, error, refresh } = useLimeBikes({
+const { bikes, loading, error, nextRefresh } = useLimeBikes({
   pollInterval: 60000,
   proxyBase: import.meta.env.VITE_BACK_URL,
 });

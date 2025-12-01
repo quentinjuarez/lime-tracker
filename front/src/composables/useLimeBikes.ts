@@ -65,9 +65,11 @@ export function useLimeBikes(opts?: {
           distance,
         };
         return bike;
-      });
+      }) as LimeBike[];
 
-      bikes.value = list.sort((a, b) => (a.distance ?? 0) - (b.distance ?? 0));
+      bikes.value = list
+        .sort((a, b) => (a.distance ?? 0) - (b.distance ?? 0))
+        .slice(0, 10);
     } catch (err: any) {
       console.error(err);
       error.value = err?.message ?? String(err);

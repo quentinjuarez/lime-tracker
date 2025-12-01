@@ -97,7 +97,7 @@ const USER_LAT = 48.8811315;
 const USER_LNG = 2.3886633;
 
 const { bikes, loading, error, refresh } = useLimeBikes({
-  pollInterval: 15000,
+  pollInterval: 60000,
   proxyBase: import.meta.env.VITE_BACK_URL,
 });
 

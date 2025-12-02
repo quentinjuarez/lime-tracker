@@ -64,8 +64,8 @@
           <thead class="bg-gray-100 sticky top-0 border-b">
             <tr>
               <th class="text-left px-3 py-2">ID</th>
-              <th class="text-left px-3 py-2">Lat</th>
-              <th class="text-left px-3 py-2">Lon</th>
+              <th class="text-left px-3 py-2">Disabled</th>
+              <th class="text-left px-3 py-2">Reserved</th>
               <th class="text-left px-3 py-2">Distance</th>
             </tr>
           </thead>
@@ -77,8 +77,12 @@
               class="border-b hover:bg-gray-50"
             >
               <td class="px-3 py-2 text-sm">{{ b.bike_id }}</td>
-              <td class="px-3 py-2 text-sm">{{ b.lat.toFixed(6) }}</td>
-              <td class="px-3 py-2 text-sm">{{ b.lon.toFixed(6) }}</td>
+              <td class="px-3 py-2 text-sm">
+                {{ b.is_disabled ? 'Yes' : 'No' }}
+              </td>
+              <td class="px-3 py-2 text-sm">
+                {{ b.is_reserved ? 'Yes' : 'No' }}
+              </td>
               <td class="px-3 py-2 text-sm font-semibold">
                 {{ formatDistance(b.distance) }}
               </td>

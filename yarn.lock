@@ -709,6 +709,38 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bike-tracker-back@workspace:back":
+  version: 0.0.0-use.local
+  resolution: "bike-tracker-back@workspace:back"
+  dependencies:
+    cors: ^2.8.5
+    express: ^5.1.0
+    nodemon: ^3.1.11
+  languageName: unknown
+  linkType: soft
+
+"bike-tracker-front@workspace:front":
+  version: 0.0.0-use.local
+  resolution: "bike-tracker-front@workspace:front"
+  dependencies:
+    "@tailwindcss/vite": ^4.1.17
+    "@types/node": ^24.10.1
+    "@vitejs/plugin-vue": ^6.0.1
+    "@vue/tsconfig": ^0.8.1
+    tailwindcss: ^4.1.17
+    typescript: ~5.9.3
+    vite: "npm:rolldown-vite@7.2.5"
+    vue: ^3.5.24
+    vue-tsc: ^3.1.4
+  languageName: unknown
+  linkType: soft
+
+"bike-tracker@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "bike-tracker@workspace:."
+  languageName: unknown
+  linkType: soft
+
 "binary-extensions@npm:^2.0.0":
   version: 2.3.0
   resolution: "binary-extensions@npm:2.3.0"
@@ -1499,38 +1531,6 @@ __metadata:
   checksum: 6e5ef66e7d7e57af8712ed7125968d31d8120a84cc530d7483d1cbc17b06a10f1187e63054b7a5cdd16d345429007cf7be46464bd7b327be7080f8604f246c73
   languageName: node
   linkType: hard
-
-"lime-tracker-back@workspace:back":
-  version: 0.0.0-use.local
-  resolution: "lime-tracker-back@workspace:back"
-  dependencies:
-    cors: ^2.8.5
-    express: ^5.1.0
-    nodemon: ^3.1.11
-  languageName: unknown
-  linkType: soft
-
-"lime-tracker-front@workspace:front":
-  version: 0.0.0-use.local
-  resolution: "lime-tracker-front@workspace:front"
-  dependencies:
-    "@tailwindcss/vite": ^4.1.17
-    "@types/node": ^24.10.1
-    "@vitejs/plugin-vue": ^6.0.1
-    "@vue/tsconfig": ^0.8.1
-    tailwindcss: ^4.1.17
-    typescript: ~5.9.3
-    vite: "npm:rolldown-vite@7.2.5"
-    vue: ^3.5.24
-    vue-tsc: ^3.1.4
-  languageName: unknown
-  linkType: soft
-
-"lime-tracker@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "lime-tracker@workspace:."
-  languageName: unknown
-  linkType: soft
 
 "lru-cache@npm:^11.0.0, lru-cache@npm:^11.1.0, lru-cache@npm:^11.2.1":
   version: 11.2.2

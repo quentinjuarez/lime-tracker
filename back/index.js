@@ -21,41 +21,60 @@ function getCache(key) {
   return e.data;
 }
 
-const LIME_BASE = 'https://data.lime.bike/api/partners/v2/gbfs/paris';
+// ── Provider configs ───────────────────────────────────────────────
 
-app.get('/lime/index', async (req, res) => {
-  const cached = getCache('index');
-  if (cached) return res.json(cached);
+const PROVIDERS = {
+  lime: {
+    base: 'https://data.lime.bike/api/partners/v2/gbfs/paris',
+    gbfs: '/gbfs.json',
+    freeBikes: '/free_bike_status',
+  },
+  voi: {
+    base: 'https://api.voiapp.io/gbfs/fr/6bb6b5dc-1cda-4da7-9216-d3023a0bc54a/v2/352',
+    gbfs: '/gbfs.json',
+    freeBikes: '/free_bike_status.json',
+  },
+};
 
-  try {
-    const r = await fetch(`${LIME_BASE}/gbfs.json`);
-    const data = await r.json();
-    setCache('index', data, 30);
-    res.json(data);
-  } catch (err) {
-    console.error(err);
-    res.status(502).json({ error: 'failed to fetch lime index' });
-  }
-});
+// ── Generic routes per provider ────────────────────────────────────
 
-app.get('/lime/free_bike_status', async (req, res) => {
-  // allow query param ?raw=1 to return the raw upstream response
-  const raw = !!req.query.raw;
-  const cached = getCache('free_bike_status');
-  if (cached && !raw) return res.json(cached);
+for (const [name, cfg] of Object.entries(PROVIDERS)) {
+  app.get(`/${name}/index`, async (_req, res) => {
+    const cacheKey = `${name}_index`;
+    const cached = getCache(cacheKey);
+    if (cached) return res.json(cached);
 
-  try {
-    const r = await fetch(`${LIME_BASE}/free_bike_status`);
-    const data = await r.json();
+    try {
+      const r = await fetch(`${cfg.base}${cfg.gbfs}`);
+      const data = await r.json();
+      setCache(cacheKey, data, 30);
+      res.json(data);
+    } catch (err) {
+      console.error(err);
+      res.status(502).json({ error: `failed to fetch ${name} index` });
+    }
+  });
 
-    setCache('free_bike_status', data, 30);
-    res.json(data);
-  } catch (err) {
-    console.error(err);
-    res.status(502).json({ error: 'failed to fetch free_bike_status' });
-  }
-});
+  app.get(`/${name}/free_bike_status`, async (req, res) => {
+    const raw = !!req.query.raw;
+    const cacheKey = `${name}_free_bike_status`;
+    const cached = getCache(cacheKey);
+    if (cached && !raw) return res.json(cached);
+
+    try {
+      const r = await fetch(`${cfg.base}${cfg.freeBikes}`);
+      const data = await r.json();
+      setCache(cacheKey, data, 30);
+      res.json(data);
+    } catch (err) {
+      console.error(err);
+      res
+        .status(502)
+        .json({ error: `failed to fetch ${name} free_bike_status` });
+    }
+  });
+}
 
 app.listen(PORT, () =>
-  console.log(`Lime proxy running on http://localhost:${PORT}`)
+  console.log(`Bike-tracker proxy running on http://localhost:${PORT}`),
 );

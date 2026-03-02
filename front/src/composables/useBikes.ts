@@ -1,23 +1,27 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 
-export interface LimeBike {
+export type Provider = 'lime' | 'voi';
+
+export interface Bike {
   bike_id: string;
   lat: number;
   lon: number;
-  is_reserved?: number;
-  is_disabled?: number;
+  is_reserved?: boolean;
+  is_disabled?: boolean;
   vehicle_type_id?: string;
+  current_range_meters?: number;
   distance?: number; // meters
+  provider: Provider;
 }
 
-const USER_LAT = 48.8811315;
-const USER_LNG = 2.3886633;
+const USER_LAT = 48.894444;
+const USER_LNG = 2.375194;
 
 function haversineDistance(
   lat1: number,
   lon1: number,
   lat2: number,
-  lon2: number
+  lon2: number,
 ) {
   const R = 6371e3;
   const toRad = (n: number) => (n * Math.PI) / 180;
@@ -29,49 +33,77 @@ function haversineDistance(
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-export function useLimeBikes(opts?: {
+export function useBikes(opts?: {
+  providers?: Provider[];
   pollInterval?: number;
   proxyBase?: string;
+  limit?: number;
 }) {
-  const bikes = ref<LimeBike[]>([]);
+  const bikes = ref<Bike[]>([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
   const nextRefresh = ref(0);
 
-  const pollInterval = opts?.pollInterval ?? 60000; // 60s default
+  const providers = opts?.providers ?? ['lime', 'voi'];
+  const pollInterval = opts?.pollInterval ?? 60000;
   const proxyBase = opts?.proxyBase ?? '';
+  const limit = opts?.limit ?? 10;
 
   let timer: ReturnType<typeof setTimeout> | null = null;
   let countdownTimer: ReturnType<typeof setInterval> | null = null;
   let stopped = false;
 
+  async function fetchProvider(provider: Provider): Promise<Bike[]> {
+    const res = await fetch(`${proxyBase}/${provider}/free_bike_status`);
+    if (!res.ok) throw new Error(`${provider} fetch failed: ${res.status}`);
+    const json = await res.json();
+
+    return (json.data?.bikes || []).map((b: any) => {
+      const lat = Number(b.lat);
+      const lon = Number(b.lon);
+      const distance = haversineDistance(USER_LAT, USER_LNG, lat, lon);
+      return {
+        bike_id: b.bike_id,
+        lat,
+        lon,
+        is_reserved: b.is_reserved,
+        is_disabled: b.is_disabled,
+        vehicle_type_id: b.vehicle_type_id,
+        current_range_meters: b.current_range_meters,
+        distance,
+        provider,
+      } satisfies Bike;
+    });
+  }
+
   async function fetchOnce() {
     loading.value = true;
     error.value = null;
     try {
-      const res = await fetch(`${proxyBase}/lime/free_bike_status`);
-      if (!res.ok) throw new Error('fetch failed: ' + res.status);
-      const json = await res.json();
+      const results = await Promise.allSettled(
+        providers.map((p) => fetchProvider(p)),
+      );
 
-      const list = (json.data?.bikes || []).map((b: any) => {
-        const lat = Number(b.lat);
-        const lon = Number(b.lon);
-        const distance = haversineDistance(USER_LAT, USER_LNG, lat, lon);
-        const bike: LimeBike = {
-          bike_id: b.bike_id,
-          lat,
-          lon,
-          is_reserved: b.is_reserved,
-          is_disabled: b.is_disabled,
-          vehicle_type_id: b.vehicle_type_id,
-          distance,
-        };
-        return bike;
-      }) as LimeBike[];
+      const all: Bike[] = [];
+      const errors: string[] = [];
 
-      bikes.value = list
+      for (const [i, result] of results.entries()) {
+        if (result.status === 'fulfilled') {
+          all.push(...result.value);
+        } else {
+          errors.push(
+            `${providers[i]}: ${result.reason?.message ?? result.reason}`,
+          );
+        }
+      }
+
+      if (errors.length && !all.length) {
+        throw new Error(errors.join('; '));
+      }
+
+      bikes.value = all
         .sort((a, b) => (a.distance ?? 0) - (b.distance ?? 0))
-        .slice(0, 10);
+        .slice(0, limit);
     } catch (err: any) {
       console.error(err);
       error.value = err?.message ?? String(err);

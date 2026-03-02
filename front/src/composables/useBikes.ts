@@ -1,4 +1,5 @@
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
+import { useProfileStore } from '../stores/profile';
 
 export type Provider = 'lime' | 'voi';
 export type FormFactor = 'scooter' | 'bicycle';
@@ -34,10 +35,7 @@ const MAX_RANGE: Record<
   voi_bike: { form_factor: 'bicycle', max_range_meters: 80000 },
 };
 
-const USER_LAT = 48.894444;
-const USER_LNG = 2.375194;
-
-function haversineDistance(
+export function haversineDistance(
   lat1: number,
   lon1: number,
   lat2: number,
@@ -53,27 +51,24 @@ function haversineDistance(
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-export function useBikes(opts?: {
-  providers?: Provider[];
-  pollInterval?: number;
-  proxyBase?: string;
-  limit?: number;
-}) {
+export function useBikes(opts?: { proxyBase?: string }) {
+  const store = useProfileStore();
   const bikes = ref<Bike[]>([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
   const nextRefresh = ref(0);
 
-  const providers = opts?.providers ?? ['lime', 'voi'];
-  const pollInterval = opts?.pollInterval ?? 60000;
   const proxyBase = opts?.proxyBase ?? '';
-  const limit = opts?.limit ?? 10;
 
   let timer: ReturnType<typeof setTimeout> | null = null;
   let countdownTimer: ReturnType<typeof setInterval> | null = null;
   let stopped = false;
 
-  async function fetchProvider(provider: Provider): Promise<Bike[]> {
+  async function fetchProvider(
+    provider: Provider,
+    userLat: number,
+    userLng: number,
+  ): Promise<Bike[]> {
     const res = await fetch(`${proxyBase}/${provider}/free_bike_status`);
     if (!res.ok) throw new Error(`${provider} fetch failed: ${res.status}`);
     const json = await res.json();
@@ -81,7 +76,7 @@ export function useBikes(opts?: {
     return (json.data?.bikes || []).map((b: any) => {
       const lat = Number(b.lat);
       const lon = Number(b.lon);
-      const distance = haversineDistance(USER_LAT, USER_LNG, lat, lon);
+      const distance = haversineDistance(userLat, userLng, lat, lon);
       const vtId = b.vehicle_type_id as string | undefined;
       const vtInfo = vtId ? MAX_RANGE[vtId] : undefined;
       const max_range_meters = vtInfo?.max_range_meters;
@@ -114,11 +109,16 @@ export function useBikes(opts?: {
   }
 
   async function fetchOnce() {
+    if (!store.hasPosition) return; // Wait for position
+
+    const userLat = store.lat!;
+    const userLng = store.lng!;
+
     loading.value = true;
     error.value = null;
     try {
       const results = await Promise.allSettled(
-        providers.map((p) => fetchProvider(p)),
+        store.providers.map((p) => fetchProvider(p, userLat, userLng)),
       );
 
       const all: Bike[] = [];
@@ -129,7 +129,7 @@ export function useBikes(opts?: {
           all.push(...result.value);
         } else {
           errors.push(
-            `${providers[i]}: ${result.reason?.message ?? result.reason}`,
+            `${store.providers[i]}: ${result.reason?.message ?? result.reason}`,
           );
         }
       }
@@ -138,9 +138,27 @@ export function useBikes(opts?: {
         throw new Error(errors.join('; '));
       }
 
-      bikes.value = all
+      // Apply filters
+      let filtered = all;
+
+      // Max distance filter
+      if (store.maxDistance > 0) {
+        filtered = filtered.filter(
+          (b) => b.distance != null && b.distance <= store.maxDistance,
+        );
+      }
+
+      // Min battery filter
+      if (store.minBattery > 0) {
+        filtered = filtered.filter(
+          (b) =>
+            b.battery_percent != null && b.battery_percent >= store.minBattery,
+        );
+      }
+
+      bikes.value = filtered
         .sort((a, b) => (a.distance ?? 0) - (b.distance ?? 0))
-        .slice(0, limit);
+        .slice(0, store.limit);
     } catch (err: any) {
       console.error(err);
       error.value = err?.message ?? String(err);
@@ -149,14 +167,41 @@ export function useBikes(opts?: {
     }
   }
 
+  function clearTimers() {
+    if (timer) {
+      clearTimeout(timer);
+      timer = null;
+    }
+  }
+
   function scheduleNext() {
     if (stopped) return;
-    nextRefresh.value = pollInterval / 1000;
+    const intervalMs = store.pollInterval * 1000;
+    nextRefresh.value = store.pollInterval;
     timer = setTimeout(async () => {
       await fetchOnce();
       scheduleNext();
-    }, pollInterval);
+    }, intervalMs);
   }
+
+  // Re-fetch when store settings change
+  watch(
+    () => [
+      store.lat,
+      store.lng,
+      store.providers,
+      store.limit,
+      store.maxDistance,
+      store.minBattery,
+      store.pollInterval,
+    ],
+    async () => {
+      clearTimers();
+      await fetchOnce();
+      scheduleNext();
+    },
+    { deep: true },
+  );
 
   onMounted(async () => {
     stopped = false;
@@ -172,9 +217,9 @@ export function useBikes(opts?: {
 
   onUnmounted(() => {
     stopped = true;
-    if (timer) clearTimeout(timer);
+    clearTimers();
     if (countdownTimer) clearInterval(countdownTimer);
   });
 
-  return { bikes, loading, error, nextRefresh };
+  return { bikes, loading, error, nextRefresh, fetchOnce };
 }

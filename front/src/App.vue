@@ -1,91 +1,71 @@
 <template>
-  <div class="bg-gray-50 min-h-screen flex flex-col">
-    <div class="p-8 max-w-6xl mx-auto w-full flex flex-col flex-1">
-      <header class="bg-white p-6 rounded-lg shadow-md border mb-6">
-        <div class="flex items-center justify-between">
-          <h1 class="text-3xl font-bold text-gray-800">
-            Vélos &amp; trottinettes près de toi
-          </h1>
+  <div class="relative w-screen h-screen overflow-hidden">
+    <BikeMap
+      v-show="activeTab === 'map'"
+      :bikes="bikes"
+      :user-lat="USER_LAT"
+      :user-lng="USER_LNG"
+    />
 
-          <div class="text-right">
-            <p class="text-sm text-gray-600">
-              Prochaine mise à jour dans :
-              <strong class="font-mono">{{ nextRefresh }}s</strong>
-            </p>
-          </div>
-        </div>
+    <div
+      v-if="activeTab === 'list'"
+      class="w-full h-full overflow-auto bg-gray-50 pt-16 px-6 pb-6"
+    >
+      <BikeList :bikes="bikes" />
+    </div>
 
-        <p class="text-sm text-gray-600 mt-2">
-          Position utilisée : <strong>{{ USER_LAT }}, {{ USER_LNG }}</strong>
-        </p>
+    <!-- Tabs – top left -->
+    <div class="fixed top-4 left-16 z-1000 flex gap-2">
+      <button
+        v-for="tab in tabs"
+        :key="tab.key"
+        class="px-4 py-2 rounded-md text-sm font-medium shadow-lg backdrop-blur transition-colors"
+        :class="
+          activeTab === tab.key
+            ? 'bg-gray-900 text-white'
+            : 'bg-white/80 text-gray-700 hover:bg-white'
+        "
+        @click="activeTab = tab.key"
+      >
+        {{ tab.label }}
+      </button>
+    </div>
 
-        <!-- Tabs -->
-        <div class="flex gap-2 mt-4">
-          <button
-            v-for="tab in tabs"
-            :key="tab.key"
-            class="px-4 py-2 rounded-md text-sm font-medium transition-colors"
-            :class="
-              activeTab === tab.key
-                ? 'bg-gray-800 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            "
-            @click="activeTab = tab.key"
-          >
-            {{ tab.label }}
-          </button>
-        </div>
-      </header>
-
-      <div
+    <!-- Refresh badge – top right -->
+    <div
+      class="fixed top-4 right-8 z-1000 flex items-center gap-2 bg-black/70 backdrop-blur text-white text-xs font-mono px-3 py-2 rounded-lg shadow-lg"
+    >
+      <svg
         v-if="loading"
-        class="flex items-center justify-center p-8 bg-gray-100 rounded-lg"
+        class="animate-spin h-4 w-4 text-blue-400"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
       >
-        <svg
-          class="animate-spin h-8 w-8 text-blue-600"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <circle
-            class="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            stroke-width="4"
-          ></circle>
-          <path
-            class="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-          ></path>
-        </svg>
-        <span class="ml-4 text-gray-600">Chargement…</span>
-      </div>
+        <circle
+          class="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          stroke-width="4"
+        />
+        <path
+          class="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        />
+      </svg>
+      <span v-if="loading">Chargement…</span>
+      <span v-else>↻ {{ nextRefresh }}s</span>
+    </div>
 
-      <div
-        v-if="error"
-        class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative"
-        role="alert"
-      >
-        <strong class="font-bold">Erreur :</strong>
-        <span class="block sm:inline">{{ error }}</span>
-      </div>
-
-      <!-- MAP VIEW -->
-      <div
-        v-if="!loading && !error && activeTab === 'map'"
-        class="flex-1 min-h-[75vh] border rounded shadow overflow-hidden"
-      >
-        <BikeMap :bikes="bikes" :user-lat="USER_LAT" :user-lng="USER_LNG" />
-      </div>
-
-      <!-- LIST VIEW -->
-      <BikeList
-        v-if="!loading && !error && activeTab === 'list'"
-        :bikes="bikes"
-      />
+    <!-- Error toast -->
+    <div
+      v-if="error"
+      class="fixed top-16 right-8 z-1000 bg-red-600/90 backdrop-blur text-white text-xs px-3 py-2 rounded-lg shadow-lg max-w-xs"
+    >
+      {{ error }}
     </div>
   </div>
 </template>

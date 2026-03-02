@@ -1,11 +1,11 @@
 <template>
-  <div class="w-full h-full relative">
+  <div class="w-full relative" style="height: 100vh">
     <l-map
-      ref="map"
+      v-if="ready"
       :zoom="zoom"
       :center="center"
       :use-global-leaflet="false"
-      class="w-full h-full rounded-lg z-0"
+      style="width: 100%; height: 100%"
     >
       <l-tile-layer
         url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
@@ -74,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, onMounted, nextTick } from 'vue';
 import {
   LMap,
   LTileLayer,
@@ -90,7 +90,15 @@ const props = defineProps<{
   userLng: number;
 }>();
 
-const zoom = 15;
+const ready = ref(false);
+
+onMounted(() => {
+  nextTick(() => {
+    ready.value = true;
+  });
+});
+
+const zoom = 20;
 const center = computed<[number, number]>(() => [props.userLat, props.userLng]);
 
 function markerColor(provider: Provider): string {

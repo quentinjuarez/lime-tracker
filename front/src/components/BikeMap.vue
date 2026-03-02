@@ -36,14 +36,16 @@
         :fill-color="markerColor(bike.provider)"
         :fill-opacity="0.85"
       >
-        <l-tooltip>
+        <l-tooltip
+          :options="{ permanent: false, sticky: true, interactive: false }"
+        >
           <div class="text-xs">
-            <strong class="uppercase">{{ bike.provider }}</strong
-            ><br />
+            <strong class="uppercase">{{ bike.provider }}</strong>
+            <br />
             {{ bike.bike_id }}<br />
             {{ formatDistance(bike.distance) }}
             <template v-if="bike.battery_percent != null">
-              <br />🔋 {{ bike.battery_percent }}%
+              {{ bike.battery_percent }}%
             </template>
           </div>
         </l-tooltip>
@@ -110,8 +112,8 @@ function markerColor(provider: Provider): string {
 
 function formatDistance(m?: number) {
   if (m == null) return '-';
-  if (m < 1000) return `${Math.round(m)} m`;
-  return `${(m / 1000).toFixed(2)} km`;
+  if (m < 1000) return `${Math.round(m)}m`;
+  return `${(m / 1000).toFixed(2)}km`;
 }
 </script>
 

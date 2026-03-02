@@ -1,1 +1,32 @@
 @import 'tailwindcss';
+
+@theme {
+  --color-lime-brand: #00de00;
+  --color-voi-brand: #f44336;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  background: #000;
+  color: #f59e0b;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Menlo', monospace;
+}
+
+/* Scrollbar dark theme */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+::-webkit-scrollbar-thumb {
+  background: #f59e0b33;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #f59e0b66;
+}

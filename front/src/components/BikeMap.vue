@@ -22,7 +22,7 @@
         fill-color="#3b82f6"
         :fill-opacity="0.9"
       >
-        <l-tooltip :options="{ permanent: false }">Ma position</l-tooltip>
+        <l-tooltip :options="{ permanent: false }">Me</l-tooltip>
       </l-circle-marker>
 
       <!-- Bikes -->
@@ -53,20 +53,14 @@
     >
       <div class="flex items-center gap-2">
         <span class="w-3 h-3 rounded-full bg-blue-500 inline-block"></span>
-        Ma position
+        Me
       </div>
       <div class="flex items-center gap-2">
-        <span
-          class="w-3 h-3 rounded-full inline-block"
-          style="background: #00de00"
-        ></span>
+        <span class="w-3 h-3 rounded-full inline-block bg-lime-brand"></span>
         Lime
       </div>
       <div class="flex items-center gap-2">
-        <span
-          class="w-3 h-3 rounded-full inline-block"
-          style="background: #f44336"
-        ></span>
+        <span class="w-3 h-3 rounded-full inline-block bg-voi-brand"></span>
         Voi
       </div>
     </div>
@@ -98,11 +92,17 @@ onMounted(() => {
   });
 });
 
-const zoom = 20;
+const zoom = 17;
 const center = computed<[number, number]>(() => [props.userLat, props.userLng]);
 
+// Leaflet needs raw hex values
+const PROVIDER_HEX: Record<Provider, string> = {
+  lime: '#00de00',
+  voi: '#f44336',
+};
+
 function markerColor(provider: Provider): string {
-  return provider === 'lime' ? '#00de00' : '#f44336';
+  return PROVIDER_HEX[provider];
 }
 
 function formatDistance(m?: number) {
@@ -111,3 +111,82 @@ function formatDistance(m?: number) {
   return `${(m / 1000).toFixed(2)} km`;
 }
 </script>
+
+<style scoped>
+/* Leaflet zoom controls */
+:deep(.leaflet-control-zoom) {
+  border: 1px solid rgba(245, 158, 11, 0.3) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+  background: transparent !important;
+}
+
+:deep(.leaflet-control-zoom a) {
+  background: rgba(0, 0, 0, 0.8) !important;
+  color: #f59e0b !important;
+  border-color: rgba(245, 158, 11, 0.2) !important;
+  font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace !important;
+  font-size: 16px !important;
+  width: 32px !important;
+  height: 32px !important;
+  line-height: 32px !important;
+  backdrop-filter: blur(8px);
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+:deep(.leaflet-control-zoom a:hover) {
+  background: rgba(245, 158, 11, 0.15) !important;
+  color: #fbbf24 !important;
+}
+
+:deep(.leaflet-control-zoom a.leaflet-disabled) {
+  background: rgba(0, 0, 0, 0.6) !important;
+  color: rgba(245, 158, 11, 0.3) !important;
+}
+
+/* Attribution */
+:deep(.leaflet-control-attribution) {
+  background: rgba(0, 0, 0, 0.7) !important;
+  color: rgba(245, 158, 11, 0.5) !important;
+  font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace !important;
+  font-size: 9px !important;
+  padding: 2px 8px !important;
+  border-radius: 4px 0 0 0 !important;
+  backdrop-filter: blur(8px);
+}
+
+:deep(.leaflet-control-attribution a) {
+  color: rgba(245, 158, 11, 0.6) !important;
+}
+
+:deep(.leaflet-control-attribution a:hover) {
+  color: #f59e0b !important;
+}
+
+/* Tooltip */
+:deep(.leaflet-tooltip) {
+  background: rgba(0, 0, 0, 0.85) !important;
+  border: 1px solid rgba(245, 158, 11, 0.3) !important;
+  color: #f59e0b !important;
+  font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace !important;
+  font-size: 11px !important;
+  border-radius: 6px !important;
+  padding: 6px 10px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+}
+
+:deep(.leaflet-tooltip-top::before) {
+  border-top-color: rgba(0, 0, 0, 0.85) !important;
+}
+:deep(.leaflet-tooltip-bottom::before) {
+  border-bottom-color: rgba(0, 0, 0, 0.85) !important;
+}
+:deep(.leaflet-tooltip-left::before) {
+  border-left-color: rgba(0, 0, 0, 0.85) !important;
+}
+:deep(.leaflet-tooltip-right::before) {
+  border-right-color: rgba(0, 0, 0, 0.85) !important;
+}
+</style>

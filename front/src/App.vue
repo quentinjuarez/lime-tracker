@@ -1,5 +1,5 @@
 <template>
-  <div class="relative w-screen h-screen overflow-hidden">
+  <div class="relative w-screen h-screen overflow-hidden bg-black">
     <BikeMap
       v-show="activeTab === 'map'"
       :bikes="bikes"
@@ -9,7 +9,7 @@
 
     <div
       v-if="activeTab === 'list'"
-      class="w-full h-full overflow-auto bg-gray-50 pt-16 px-6 pb-6"
+      class="w-full h-full overflow-auto bg-black pt-16 px-6 pb-6"
     >
       <BikeList :bikes="bikes" />
     </div>
@@ -19,11 +19,11 @@
       <button
         v-for="tab in tabs"
         :key="tab.key"
-        class="px-4 py-2 rounded-md text-sm font-medium shadow-lg backdrop-blur transition-colors"
+        class="px-4 py-2 rounded-md text-xs font-mono uppercase tracking-wider shadow-lg backdrop-blur transition-colors border"
         :class="
           activeTab === tab.key
-            ? 'bg-gray-900 text-white'
-            : 'bg-white/80 text-gray-700 hover:bg-white'
+            ? 'bg-amber-500/20 text-amber-400 border-amber-500/50'
+            : 'bg-black/70 text-amber-600/60 border-amber-900/30 hover:bg-amber-500/10 hover:text-amber-400'
         "
         @click="activeTab = tab.key"
       >
@@ -33,11 +33,11 @@
 
     <!-- Refresh badge – top right -->
     <div
-      class="fixed top-4 right-8 z-1000 flex items-center gap-2 bg-black/70 backdrop-blur text-white text-xs font-mono px-3 py-2 rounded-lg shadow-lg"
+      class="fixed top-4 right-8 z-1000 flex items-center gap-2 bg-black/80 backdrop-blur text-amber-400 text-xs font-mono px-3 py-2 rounded-lg shadow-lg border border-amber-900/30"
     >
       <svg
         v-if="loading"
-        class="animate-spin h-4 w-4 text-blue-400"
+        class="animate-spin h-4 w-4 text-amber-400"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
@@ -56,14 +56,14 @@
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
         />
       </svg>
-      <span v-if="loading">Chargement…</span>
+      <span v-if="loading">Loading…</span>
       <span v-else>↻ {{ nextRefresh }}s</span>
     </div>
 
     <!-- Error toast -->
     <div
       v-if="error"
-      class="fixed top-16 right-8 z-1000 bg-red-600/90 backdrop-blur text-white text-xs px-3 py-2 rounded-lg shadow-lg max-w-xs"
+      class="fixed top-16 right-8 z-1000 bg-red-900/80 backdrop-blur text-red-400 text-xs font-mono px-3 py-2 rounded-lg shadow-lg border border-red-800/50 max-w-xs"
     >
       {{ error }}
     </div>
@@ -81,8 +81,8 @@ const USER_LNG = 2.375194;
 
 type Tab = 'list' | 'map';
 const tabs: { key: Tab; label: string }[] = [
-  { key: 'map', label: 'Carte' },
-  { key: 'list', label: 'Liste' },
+  { key: 'map', label: 'Map' },
+  { key: 'list', label: 'Info' },
 ];
 const activeTab = ref<Tab>('map');
 

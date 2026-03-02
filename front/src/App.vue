@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-gray-50 min-h-screen">
-    <div class="p-8 max-w-6xl mx-auto">
-      <header class="bg-white p-6 rounded-lg shadow-md border mb-8">
+  <div class="bg-gray-50 min-h-screen flex flex-col">
+    <div class="p-8 max-w-6xl mx-auto w-full flex flex-col flex-1">
+      <header class="bg-white p-6 rounded-lg shadow-md border mb-6">
         <div class="flex items-center justify-between">
           <h1 class="text-3xl font-bold text-gray-800">
             Vélos &amp; trottinettes près de toi
@@ -18,6 +18,23 @@
         <p class="text-sm text-gray-600 mt-2">
           Position utilisée : <strong>{{ USER_LAT }}, {{ USER_LNG }}</strong>
         </p>
+
+        <!-- Tabs -->
+        <div class="flex gap-2 mt-4">
+          <button
+            v-for="tab in tabs"
+            :key="tab.key"
+            class="px-4 py-2 rounded-md text-sm font-medium transition-colors"
+            :class="
+              activeTab === tab.key
+                ? 'bg-gray-800 text-white'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            "
+            @click="activeTab = tab.key"
+          >
+            {{ tab.label }}
+          </button>
+        </div>
       </header>
 
       <div
@@ -56,67 +73,43 @@
         <span class="block sm:inline">{{ error }}</span>
       </div>
 
+      <!-- MAP VIEW -->
       <div
-        v-if="!loading && !error"
-        class="overflow-auto max-h-[75vh] border rounded shadow"
+        v-if="!loading && !error && activeTab === 'map'"
+        class="flex-1 min-h-[75vh] border rounded shadow overflow-hidden"
       >
-        <table class="min-w-full bg-white">
-          <thead class="bg-gray-100 sticky top-0 border-b">
-            <tr>
-              <th class="text-left px-3 py-2">Provider</th>
-              <th class="text-left px-3 py-2">ID</th>
-              <th class="text-left px-3 py-2">Distance</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr
-              v-for="b in bikes"
-              :key="`${b.provider}-${b.bike_id}`"
-              class="border-b hover:bg-gray-50"
-            >
-              <td class="px-3 py-2 text-sm">
-                <span
-                  class="inline-block px-2 py-0.5 rounded text-xs font-semibold text-white"
-                  :class="providerColor(b.provider)"
-                >
-                  {{ b.provider }}
-                </span>
-              </td>
-              <td class="px-3 py-2 text-sm">{{ b.bike_id }}</td>
-              <td class="px-3 py-2 text-sm font-semibold">
-                {{ formatDistance(b.distance) }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <BikeMap :bikes="bikes" :user-lat="USER_LAT" :user-lng="USER_LNG" />
       </div>
+
+      <!-- LIST VIEW -->
+      <BikeList
+        v-if="!loading && !error && activeTab === 'list'"
+        :bikes="bikes"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useBikes, type Provider } from './composables/useBikes';
+import { ref } from 'vue';
+import { useBikes } from './composables/useBikes';
+import BikeMap from './components/BikeMap.vue';
+import BikeList from './components/BikeList.vue';
 
 const USER_LAT = 48.894444;
 const USER_LNG = 2.375194;
+
+type Tab = 'list' | 'map';
+const tabs: { key: Tab; label: string }[] = [
+  { key: 'map', label: 'Carte' },
+  { key: 'list', label: 'Liste' },
+];
+const activeTab = ref<Tab>('map');
 
 const { bikes, loading, error, nextRefresh } = useBikes({
   providers: ['lime', 'voi'],
   pollInterval: 60000,
   proxyBase: import.meta.env.VITE_BACK_URL || 'http://localhost:13001',
+  limit: 20,
 });
-
-function formatDistance(m?: number) {
-  if (m == null) return '-';
-  if (m < 1000) return `${Math.round(m)} m`;
-  return `${(m / 1000).toFixed(2)} km`;
-}
-
-function providerColor(provider: Provider) {
-  return {
-    lime: 'bg-green-500',
-    voi: 'bg-pink-500',
-  }[provider];
-}
 </script>

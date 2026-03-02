@@ -42,6 +42,9 @@
             ><br />
             {{ bike.bike_id }}<br />
             {{ formatDistance(bike.distance) }}
+            <template v-if="bike.battery_percent != null">
+              <br />🔋 {{ bike.battery_percent }}%
+            </template>
           </div>
         </l-tooltip>
       </l-circle-marker>
@@ -115,7 +118,7 @@ function formatDistance(m?: number) {
 <style scoped>
 /* Leaflet zoom controls */
 :deep(.leaflet-control-zoom) {
-  border: 1px solid rgba(245, 158, 11, 0.3) !important;
+  border: 1px solid color-mix(in srgb, var(--color-led) 30%, transparent) !important;
   border-radius: 8px !important;
   overflow: hidden;
   background: transparent !important;
@@ -123,8 +126,12 @@ function formatDistance(m?: number) {
 
 :deep(.leaflet-control-zoom a) {
   background: rgba(0, 0, 0, 0.8) !important;
-  color: #f59e0b !important;
-  border-color: rgba(245, 158, 11, 0.2) !important;
+  color: var(--color-led) !important;
+  border-color: color-mix(
+    in srgb,
+    var(--color-led) 20%,
+    transparent
+  ) !important;
   font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace !important;
   font-size: 16px !important;
   width: 32px !important;
@@ -137,19 +144,19 @@ function formatDistance(m?: number) {
 }
 
 :deep(.leaflet-control-zoom a:hover) {
-  background: rgba(245, 158, 11, 0.15) !important;
-  color: #fbbf24 !important;
+  background: color-mix(in srgb, var(--color-led) 15%, transparent) !important;
+  color: color-mix(in srgb, var(--color-led) 85%, white) !important;
 }
 
 :deep(.leaflet-control-zoom a.leaflet-disabled) {
   background: rgba(0, 0, 0, 0.6) !important;
-  color: rgba(245, 158, 11, 0.3) !important;
+  color: color-mix(in srgb, var(--color-led) 30%, transparent) !important;
 }
 
 /* Attribution */
 :deep(.leaflet-control-attribution) {
   background: rgba(0, 0, 0, 0.7) !important;
-  color: rgba(245, 158, 11, 0.5) !important;
+  color: color-mix(in srgb, var(--color-led) 50%, transparent) !important;
   font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace !important;
   font-size: 9px !important;
   padding: 2px 8px !important;
@@ -158,18 +165,18 @@ function formatDistance(m?: number) {
 }
 
 :deep(.leaflet-control-attribution a) {
-  color: rgba(245, 158, 11, 0.6) !important;
+  color: color-mix(in srgb, var(--color-led) 60%, transparent) !important;
 }
 
 :deep(.leaflet-control-attribution a:hover) {
-  color: #f59e0b !important;
+  color: var(--color-led) !important;
 }
 
 /* Tooltip */
 :deep(.leaflet-tooltip) {
   background: rgba(0, 0, 0, 0.85) !important;
-  border: 1px solid rgba(245, 158, 11, 0.3) !important;
-  color: #f59e0b !important;
+  border: 1px solid color-mix(in srgb, var(--color-led) 30%, transparent) !important;
+  color: var(--color-led) !important;
   font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace !important;
   font-size: 11px !important;
   border-radius: 6px !important;

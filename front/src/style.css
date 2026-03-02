@@ -3,6 +3,7 @@
 @theme {
   --color-lime-brand: #00de00;
   --color-voi-brand: #f44336;
+  --color-led: #f97316;
 }
 
 html,
@@ -11,7 +12,7 @@ body,
   height: 100%;
   margin: 0;
   background: #000;
-  color: #f59e0b;
+  color: var(--color-led);
   font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Menlo', monospace;
 }
 
@@ -24,9 +25,9 @@ body,
   background: #0a0a0a;
 }
 ::-webkit-scrollbar-thumb {
-  background: #f59e0b33;
+  background: color-mix(in srgb, var(--color-led) 20%, transparent);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #f59e0b66;
+  background: color-mix(in srgb, var(--color-led) 40%, transparent);
 }

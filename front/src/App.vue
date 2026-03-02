@@ -22,8 +22,8 @@
         class="px-4 py-2 rounded-md text-xs font-mono uppercase tracking-wider shadow-lg backdrop-blur transition-colors border"
         :class="
           activeTab === tab.key
-            ? 'bg-amber-500/20 text-amber-400 border-amber-500/50'
-            : 'bg-black/70 text-amber-600/60 border-amber-900/30 hover:bg-amber-500/10 hover:text-amber-400'
+            ? 'bg-led/20 text-led border-led/50'
+            : 'bg-black/70 text-led/60 border-led/20 hover:bg-led/10 hover:text-led'
         "
         @click="activeTab = tab.key"
       >
@@ -33,11 +33,11 @@
 
     <!-- Refresh badge – top right -->
     <div
-      class="fixed top-4 right-8 z-1000 flex items-center gap-2 bg-black/80 backdrop-blur text-amber-400 text-xs font-mono px-3 py-2 rounded-lg shadow-lg border border-amber-900/30"
+      class="fixed top-4 right-8 z-1000 flex items-center gap-2 bg-black/80 backdrop-blur text-led text-xs font-mono px-3 py-2 rounded-lg shadow-lg border border-led/20"
     >
       <svg
         v-if="loading"
-        class="animate-spin h-4 w-4 text-amber-400"
+        class="animate-spin h-4 w-4 text-led"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"

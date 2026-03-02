@@ -4,10 +4,11 @@
     <div class="mx-auto max-w-3xl p-4">
       <!-- Header row -->
       <div
-        class="grid grid-cols-[80px_1fr_100px] gap-2 px-4 py-2 border-b border-amber-900/60 text-amber-500/70 text-[11px] uppercase tracking-widest"
+        class="grid grid-cols-[80px_1fr_60px_100px] gap-2 px-4 py-2 border-b border-led/30 text-led/70 text-[11px] uppercase tracking-widest led-glow"
       >
         <span>Provider</span>
         <span>Vehicle</span>
+        <span class="text-right">Batt.</span>
         <span class="text-right">Dist.</span>
       </div>
 
@@ -15,8 +16,8 @@
       <div
         v-for="(b, i) in bikes"
         :key="`${b.provider}-${b.bike_id}`"
-        class="grid grid-cols-[80px_1fr_100px] gap-2 items-center px-4 py-2 border-b border-amber-950/40"
-        :class="i % 2 === 0 ? 'bg-black' : 'bg-amber-950/10'"
+        class="grid grid-cols-[80px_1fr_60px_100px] gap-2 items-center px-4 py-2 border-b border-led/15"
+        :class="i % 2 === 0 ? 'bg-black' : 'bg-led/5'"
       >
         <!-- Provider pill -->
         <span
@@ -27,15 +28,21 @@
         </span>
 
         <!-- Vehicle ID -->
-        <span
-          class="text-amber-400 text-sm tracking-wider led-glow-amber truncate"
-        >
+        <span class="text-led text-sm tracking-wider led-glow truncate">
           {{ b.bike_id }}
+        </span>
+
+        <!-- Battery -->
+        <span
+          class="text-right text-sm font-bold tracking-wide led-glow"
+          :class="batteryColor(b.battery_percent)"
+        >
+          {{ b.battery_percent != null ? `${b.battery_percent}%` : '---' }}
         </span>
 
         <!-- Distance -->
         <span
-          class="text-right text-amber-300 text-sm font-bold tracking-wide led-glow-amber"
+          class="text-right text-led text-sm font-bold tracking-wide led-glow"
         >
           {{ formatDistance(b.distance) }}
         </span>
@@ -44,7 +51,7 @@
       <!-- Empty state -->
       <div
         v-if="!bikes.length"
-        class="text-center text-amber-600/50 text-sm py-8 tracking-widest uppercase"
+        class="text-center text-led/50 text-sm py-8 tracking-widest uppercase"
       >
         No vehicles nearby
       </div>
@@ -64,6 +71,13 @@ function formatDistance(m?: number) {
   if (m < 1000) return `${Math.round(m)}m`;
   return `${(m / 1000).toFixed(1)}km`;
 }
+
+function batteryColor(pct?: number): string {
+  if (pct == null) return 'text-led/40';
+  if (pct >= 60) return 'text-green-400';
+  if (pct >= 30) return 'text-yellow-400';
+  return 'text-red-400';
+}
 </script>
 
 <style scoped>
@@ -71,10 +85,5 @@ function formatDistance(m?: number) {
   text-shadow:
     0 0 6px currentColor,
     0 0 12px currentColor;
-}
-.led-glow-amber {
-  text-shadow:
-    0 0 6px #f59e0b,
-    0 0 12px #f59e0b44;
 }
 </style>

@@ -1,6 +1,7 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 
 export type Provider = 'lime' | 'voi';
+export type FormFactor = 'scooter' | 'bicycle';
 
 export interface Bike {
   bike_id: string;
@@ -9,10 +10,29 @@ export interface Bike {
   is_reserved?: boolean;
   is_disabled?: boolean;
   vehicle_type_id?: string;
+  form_factor?: FormFactor;
   current_range_meters?: number;
+  max_range_meters?: number;
+  battery_percent?: number;
   distance?: number; // meters
   provider: Provider;
 }
+
+// ── Max range lookup per vehicle_type_id ────────────────────────────
+
+const MAX_RANGE: Record<
+  string,
+  { max_range_meters?: number; form_factor: FormFactor }
+> = {
+  // Lime
+  '1': { form_factor: 'scooter', max_range_meters: 24140 },
+  '2': { form_factor: 'scooter', max_range_meters: 40233 },
+  '3': { form_factor: 'bicycle', max_range_meters: 85000 },
+  '4': { form_factor: 'bicycle' },
+  // Voi
+  voi_scooter: { form_factor: 'scooter', max_range_meters: 80000 },
+  voi_bike: { form_factor: 'bicycle', max_range_meters: 80000 },
+};
 
 const USER_LAT = 48.894444;
 const USER_LNG = 2.375194;
@@ -62,14 +82,31 @@ export function useBikes(opts?: {
       const lat = Number(b.lat);
       const lon = Number(b.lon);
       const distance = haversineDistance(USER_LAT, USER_LNG, lat, lon);
+      const vtId = b.vehicle_type_id as string | undefined;
+      const vtInfo = vtId ? MAX_RANGE[vtId] : undefined;
+      const max_range_meters = vtInfo?.max_range_meters;
+      const current_range_meters =
+        b.current_range_meters != null
+          ? Number(b.current_range_meters)
+          : undefined;
+      const battery_percent =
+        current_range_meters != null && max_range_meters
+          ? Math.min(
+              100,
+              Math.round((current_range_meters / max_range_meters) * 100),
+            )
+          : undefined;
       return {
         bike_id: b.bike_id,
         lat,
         lon,
         is_reserved: b.is_reserved,
         is_disabled: b.is_disabled,
-        vehicle_type_id: b.vehicle_type_id,
-        current_range_meters: b.current_range_meters,
+        vehicle_type_id: vtId,
+        form_factor: vtInfo?.form_factor,
+        current_range_meters,
+        max_range_meters,
+        battery_percent,
         distance,
         provider,
       } satisfies Bike;

@@ -55,7 +55,8 @@ export const useProfileStore = defineStore('profile', {
       return profile;
     },
 
-    selectProfile(id: string) {
+    selectProfile(id?: string) {
+      if (!id) return;
       if (this.profiles.some((p) => p.id === id)) {
         this.activeProfileId = id;
       }

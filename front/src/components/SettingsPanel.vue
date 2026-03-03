@@ -30,23 +30,15 @@
             </h3>
 
             <!-- Active profile select -->
-            <select
+            <BaseSelect
               v-if="store.profiles.length"
-              :value="store.activeProfileId"
-              class="w-full bg-black border border-led/80 text-led text-sm font-mono px-3 py-2 rounded-lg focus:border-led focus:outline-none"
-              @change="
-                store.selectProfile(($event.target as HTMLSelectElement).value)
-              "
+              :model-value="store.activeProfileId ?? ''"
+              @update:model-value="store.selectProfile"
             >
-              <option
-                v-for="p in store.profiles"
-                :key="p.id"
-                :value="p.id"
-                class="bg-black text-led"
-              >
+              <option v-for="p in store.profiles" :key="p.id" :value="p.id">
                 {{ p.name }}
               </option>
-            </select>
+            </BaseSelect>
           </section>
 
           <template v-if="store.activeProfile">
@@ -138,75 +130,49 @@
               </h3>
 
               <!-- Max vehicles -->
-              <div class="space-y-1">
-                <div class="flex justify-between text-xs">
-                  <span>Max vehicles</span>
-                  <span class="text-led/80">{{ draft.limit }}</span>
-                </div>
-                <input
-                  type="range"
-                  :value="draft.limit"
-                  :min="FILTER_BOUNDS.limit.min"
-                  :max="FILTER_BOUNDS.limit.max"
-                  :step="FILTER_BOUNDS.limit.step"
-                  class="w-full slider"
-                  @input="
-                    draft.limit = Number(
-                      ($event.target as HTMLInputElement).value,
-                    )
-                  "
-                />
-              </div>
+              <BaseSlider
+                label="Max vehicles"
+                :display-value="String(draft.limit)"
+                :model-value="draft.limit"
+                :min="FILTER_BOUNDS.limit.min"
+                :max="FILTER_BOUNDS.limit.max"
+                :step="FILTER_BOUNDS.limit.step"
+                @update:model-value="draft.limit = $event"
+              />
 
               <!-- Max distance -->
-              <div class="space-y-1">
-                <div class="flex justify-between text-xs">
-                  <span>Max distance</span>
-                  <span class="text-led/80">{{
-                    draft.maxDistance === UNSET
-                      ? 'Unlimited'
-                      : `${draft.maxDistance}m`
-                  }}</span>
-                </div>
-                <input
-                  type="range"
-                  :value="draft.maxDistance === UNSET ? 0 : draft.maxDistance"
-                  min="0"
-                  :max="FILTER_BOUNDS.maxDistance.max"
-                  :step="FILTER_BOUNDS.maxDistance.step"
-                  class="w-full slider"
-                  @input="
-                    draft.maxDistance =
-                      Number(($event.target as HTMLInputElement).value) === 0
-                        ? UNSET
-                        : Number(($event.target as HTMLInputElement).value)
-                  "
-                />
-              </div>
+              <BaseSlider
+                label="Max distance"
+                :display-value="
+                  draft.maxDistance === UNSET
+                    ? 'Unlimited'
+                    : `${draft.maxDistance}m`
+                "
+                :model-value="
+                  draft.maxDistance === UNSET ? 0 : draft.maxDistance
+                "
+                :min="0"
+                :max="FILTER_BOUNDS.maxDistance.max"
+                :step="FILTER_BOUNDS.maxDistance.step"
+                @update:model-value="
+                  draft.maxDistance = $event === 0 ? UNSET : $event
+                "
+              />
 
               <!-- Min battery -->
-              <div class="space-y-1">
-                <div class="flex justify-between text-xs">
-                  <span>Min battery</span>
-                  <span class="text-led/80">{{
-                    draft.minBattery === UNSET ? 'Any' : `${draft.minBattery}%`
-                  }}</span>
-                </div>
-                <input
-                  type="range"
-                  :value="draft.minBattery === UNSET ? 0 : draft.minBattery"
-                  min="0"
-                  :max="FILTER_BOUNDS.minBattery.max"
-                  :step="FILTER_BOUNDS.minBattery.step"
-                  class="w-full slider"
-                  @input="
-                    draft.minBattery =
-                      Number(($event.target as HTMLInputElement).value) === 0
-                        ? UNSET
-                        : Number(($event.target as HTMLInputElement).value)
-                  "
-                />
-              </div>
+              <BaseSlider
+                label="Min battery"
+                :display-value="
+                  draft.minBattery === UNSET ? 'Any' : `${draft.minBattery}%`
+                "
+                :model-value="draft.minBattery === UNSET ? 0 : draft.minBattery"
+                :min="0"
+                :max="FILTER_BOUNDS.minBattery.max"
+                :step="FILTER_BOUNDS.minBattery.step"
+                @update:model-value="
+                  draft.minBattery = $event === 0 ? UNSET : $event
+                "
+              />
             </section>
 
             <!-- Reset -->
@@ -229,6 +195,8 @@
 import { ref, computed, reactive, watch } from 'vue';
 import BaseButton from './BaseButton.vue';
 import BaseInput from './BaseInput.vue';
+import BaseSelect from './BaseSelect.vue';
+import BaseSlider from './BaseSlider.vue';
 import { useProfileStore } from '../stores/profile';
 import { useGeolocation } from '../composables/useGeolocation';
 import { parseLocation } from '../utils/parseLocation';
@@ -323,41 +291,6 @@ function applyCustomLocation() {
 </script>
 
 <style scoped>
-/* Slider styling */
-.slider {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 4px;
-  background: color-mix(in srgb, var(--color-led) 20%, transparent);
-  border-radius: 2px;
-  outline: none;
-}
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--color-led);
-  cursor: pointer;
-  box-shadow: 0 0 6px var(--color-led);
-}
-.slider::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--color-led);
-  cursor: pointer;
-  border: none;
-  box-shadow: 0 0 6px var(--color-led);
-}
-
-/* Select styling */
-select option {
-  background: #000;
-  color: var(--color-led);
-}
-
 /* Transitions */
 .fade-enter-active,
 .fade-leave-active {

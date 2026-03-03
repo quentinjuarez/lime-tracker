@@ -39,7 +39,7 @@
 
       <!-- Refresh badge – top right -->
       <div
-        class="fixed top-4 right-8 z-1000 flex items-center gap-2 bg-black/80 backdrop-blur text-led text-xs font-mono px-3 py-2 rounded-lg shadow-lg border border-led/20"
+        class="fixed top-4 right-4 z-1000 flex items-center gap-2 bg-black/80 backdrop-blur text-led text-xs font-mono px-3 py-2 rounded-lg shadow-lg border border-led/20"
       >
         <svg
           v-if="loading"
@@ -62,7 +62,7 @@
             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
           />
         </svg>
-        <span v-if="loading">Loading…</span>
+        <span v-if="loading">...</span>
         <span v-else>↻ {{ nextRefresh }}s</span>
       </div>
 
@@ -78,7 +78,7 @@
     <!-- Settings button (always visible once a profile exists) -->
     <button
       v-if="store.hasActiveProfile"
-      class="fixed top-4 right-24 z-1000 bg-black/80 backdrop-blur text-led text-xs font-mono px-3 py-2 rounded-lg shadow-lg border border-led/20 hover:bg-led/10 transition-colors"
+      class="fixed top-4 right-22 z-1000 bg-black/80 backdrop-blur text-led text-xs font-mono px-3 py-2 rounded-lg shadow-lg border border-led/20 hover:bg-led/10 transition-colors"
       @click="showSettings = true"
     >
       Settings

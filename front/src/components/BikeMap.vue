@@ -167,7 +167,11 @@ function formatDistance(m?: number) {
 }
 
 :deep(.leaflet-control-attribution a) {
-  color: color-mix(in srgb, var(--color-led) 60%, transparent) !important;
+  display: none !important;
+}
+
+:deep(.leaflet-control-attribution span) {
+  display: none !important;
 }
 
 :deep(.leaflet-control-attribution a:hover) {

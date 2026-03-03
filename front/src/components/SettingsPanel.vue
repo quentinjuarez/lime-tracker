@@ -10,8 +10,12 @@
     <Transition name="slide">
       <div
         v-if="open"
-        class="fixed top-0 right-0 h-full w-80 bg-black/95 border-l border-led/50 z-2001 overflow-y-auto font-mono text-led"
+        class="fixed bottom-0 left-0 right-0 max-h-[85dvh] rounded-t-2xl border-t border-led/20 bg-black/95 z-2001 overflow-y-auto font-mono text-led md:top-0 md:bottom-auto md:left-auto md:right-0 md:h-full md:max-h-none md:w-80 md:rounded-none md:border-t-0 md:border-l"
       >
+        <!-- Mobile drag handle -->
+        <div class="flex justify-center pt-3 pb-1 md:hidden" v-if="false">
+          <div class="w-10 h-1 rounded-full bg-led/30" />
+        </div>
         <div class="p-6 space-y-6">
           <!-- Header -->
           <div class="flex items-center justify-between">
@@ -307,6 +311,13 @@ function applyCustomLocation() {
 }
 .slide-enter-from,
 .slide-leave-to {
-  transform: translateX(100%);
+  transform: translateY(100%);
+}
+
+@media (min-width: 768px) {
+  .slide-enter-from,
+  .slide-leave-to {
+    transform: translateX(100%);
+  }
 }
 </style>

@@ -4,11 +4,9 @@
       <div
         v-if="open"
         class="fixed inset-0 bg-black/10 backdrop-blur-sm z-2000"
-        @click="emit('close')"
+        @click="save"
       />
     </Transition>
-
-    <!-- Panel -->
     <Transition name="slide">
       <div
         v-if="open"
@@ -20,12 +18,7 @@
             <h2 class="text-lg font-bold uppercase tracking-widest glow-sm">
               Settings
             </h2>
-            <BaseButton
-              variant="ghost"
-              size="sm"
-              class="px-2!"
-              @click="emit('close')"
-            >
+            <BaseButton variant="ghost" size="sm" class="px-2!" @click="save">
               ✕
             </BaseButton>
           </div>
@@ -216,20 +209,15 @@
               </div>
             </section>
 
-            <!-- Save + Reset -->
-            <div class="space-y-2">
-              <BaseButton class="w-full" @click="save">
-                Save &amp; close
-              </BaseButton>
-              <BaseButton
-                variant="danger-ghost"
-                size="sm"
-                class="w-full"
-                @click="resetDraft"
-              >
-                Reset to defaults
-              </BaseButton>
-            </div>
+            <!-- Reset -->
+            <BaseButton
+              variant="danger-ghost"
+              size="sm"
+              class="w-full"
+              @click="resetDraft"
+            >
+              Reset to defaults
+            </BaseButton>
           </template>
         </div>
       </div>

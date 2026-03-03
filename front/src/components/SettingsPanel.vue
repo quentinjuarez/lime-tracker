@@ -308,9 +308,15 @@ function copyLink() {
   if (draft.limit !== FILTER_BOUNDS.limit.default)
     params.set('limit', draft.limit.toString());
   if (draft.maxDistance !== FILTER_BOUNDS.maxDistance.default)
-    params.set('maxDist', (draft.maxDistance === UNSET ? 0 : draft.maxDistance).toString());
+    params.set(
+      'maxDist',
+      (draft.maxDistance === UNSET ? 0 : draft.maxDistance).toString(),
+    );
   if (draft.minBattery !== FILTER_BOUNDS.minBattery.default)
-    params.set('minBat', (draft.minBattery === UNSET ? 0 : draft.minBattery).toString());
+    params.set(
+      'minBat',
+      (draft.minBattery === UNSET ? 0 : draft.minBattery).toString(),
+    );
 
   const qs = params.toString();
   const url = `${window.location.origin}${window.location.pathname}${qs ? `?${qs}` : ''}`;

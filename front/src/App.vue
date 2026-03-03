@@ -126,10 +126,20 @@ watch(
     if (state.limit !== FILTER_BOUNDS.limit.default)
       params.set('limit', state.limit.toString());
     if (state.maxDistance !== FILTER_BOUNDS.maxDistance.default)
-      params.set('maxDist', (state.maxDistance === UNSET ? 0 : state.maxDistance).toString());
+      params.set(
+        'maxDist',
+        (state.maxDistance === UNSET ? 0 : state.maxDistance).toString(),
+      );
     if (state.minBattery !== FILTER_BOUNDS.minBattery.default)
-      params.set('minBat', (state.minBattery === UNSET ? 0 : state.minBattery).toString());
-    window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
+      params.set(
+        'minBat',
+        (state.minBattery === UNSET ? 0 : state.minBattery).toString(),
+      );
+    window.history.replaceState(
+      {},
+      '',
+      `${window.location.pathname}?${params.toString()}`,
+    );
   },
 );
 

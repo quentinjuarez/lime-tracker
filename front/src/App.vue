@@ -9,12 +9,14 @@
         :user-lng="store.activeProfile!.lng!"
       />
 
-      <div
-        v-if="activeTab === 'list'"
-        class="w-full h-full overflow-auto bg-black pt-16 px-6 pb-6"
-      >
-        <BikeList :bikes="bikes" />
-      </div>
+      <Transition name="fade">
+        <div
+          v-if="activeTab === 'list'"
+          class="fixed inset-0 z-500 bg-black/20 backdrop-blur-sm overflow-auto pt-16 px-6 pb-6"
+        >
+          <BikeList :bikes="bikes" />
+        </div>
+      </Transition>
     </template>
 
     <!-- HUD -->

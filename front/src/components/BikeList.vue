@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="h-full w-full bg-black/10 backdrop-blur-sm overflow-auto font-mono"
-  >
+  <div class="h-full w-full overflow-auto font-mono">
     <!-- Board frame -->
     <div class="mx-auto max-w-3xl p-4">
       <!-- Header row -->

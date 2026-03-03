@@ -17,9 +17,9 @@
       <l-circle-marker
         :lat-lng="[userLat, userLng]"
         :radius="10"
-        color="#3B2077"
+        color="#ad46ff"
         :fill="true"
-        fill-color="#3B2077"
+        fill-color="#ad46ff"
         :fill-opacity="0.9"
       >
         <l-tooltip :options="{ permanent: false }">Me</l-tooltip>
@@ -57,7 +57,7 @@
       class="absolute bottom-4 left-4 bg-black/70 text-white text-xs px-3 py-2 rounded-lg z-1000 space-y-1"
     >
       <div class="flex items-center gap-2">
-        <span class="w-3 h-3 rounded-full bg-blue-500 inline-block"></span>
+        <span class="w-3 h-3 rounded-full bg-purple-500 inline-block"></span>
         Me
       </div>
       <div class="flex items-center gap-2">

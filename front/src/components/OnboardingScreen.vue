@@ -51,6 +51,22 @@
     <!-- custom input -->
     <template v-else-if="chosenMode === 'custom'">
       <div class="w-full max-w-sm space-y-4">
+        <!-- GPS option -->
+        <BaseButton
+          class="w-full flex items-center justify-center gap-2"
+          :disabled="geoLoading"
+          @click="useGpsForCustom"
+        >
+          <SpinnerIcon v-if="geoLoading" size="sm" />
+          📍 {{ geoLoading ? 'Locating…' : 'Use my GPS location' }}
+        </BaseButton>
+        <div v-if="geoError" class="text-xs text-red-400">{{ geoError }}</div>
+
+        <div
+          class="text-led/60 text-[11px] text-center uppercase tracking-widest"
+        >
+          or enter manually
+        </div>
         <BaseInput
           v-model="locationRaw"
           type="text"
@@ -118,6 +134,11 @@ const parsed = computed(() => parseLocation(locationRaw.value));
 function chooseGeo() {
   chosenMode.value = 'geolocation';
   store.ensureProfile('geolocation');
+  locate();
+}
+
+function useGpsForCustom() {
+  store.ensureProfile('custom');
   locate();
 }
 

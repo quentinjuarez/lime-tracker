@@ -64,6 +64,17 @@
 
               <!-- Custom profile → location parser input -->
               <template v-else>
+                <BaseButton size="sm" :disabled="geoLoading" @click="useGps">
+                  📍 {{ geoLoading ? 'Locating…' : 'Use GPS' }}
+                </BaseButton>
+                <div v-if="geoError" class="text-red-400 text-xs">
+                  {{ geoError }}
+                </div>
+                <div
+                  class="text-led/40 text-[11px] text-center uppercase tracking-widest"
+                >
+                  or
+                </div>
                 <BaseInput
                   v-model="locationRaw"
                   type="text"
@@ -288,37 +299,13 @@ function relocate() {
   locate();
 }
 
+function useGps() {
+  locate();
+}
+
 function applyCustomLocation() {
   if (!parsedLoc.value) return;
   store.setPosition(parsedLoc.value.lat, parsedLoc.value.lng);
   locationRaw.value = '';
 }
 </script>
-
-<style scoped>
-/* Transitions */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.slide-enter-active,
-.slide-leave-active {
-  transition: transform 0.25s ease;
-}
-.slide-enter-from,
-.slide-leave-to {
-  transform: translateY(100%);
-}
-
-@media (min-width: 768px) {
-  .slide-enter-from,
-  .slide-leave-to {
-    transform: translateX(100%);
-  }
-}
-</style>

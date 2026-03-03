@@ -56,10 +56,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useProfileStore } from './stores/profile';
 import { useBikes } from './composables/useBikes';
-import { type Provider, ALL_PROVIDERS, UNSET } from './types';
+import { type Provider, ALL_PROVIDERS, FILTER_BOUNDS, UNSET } from './types';
 import OnboardingScreen from './components/OnboardingScreen.vue';
 import BikeMap from './components/BikeMap.vue';
 import BikeList from './components/BikeList.vue';
@@ -98,6 +98,40 @@ onMounted(() => {
     if (!isNaN(minBat)) store.setMinBattery(minBat === 0 ? UNSET : minBat);
   }
 });
+
+// Keep URL in sync with the active profile (omits params that are at default)
+watch(
+  () => {
+    const p = store.activeProfile;
+    if (!p || p.lat == null || p.lng == null) return null;
+    return {
+      lat: p.lat,
+      lng: p.lng,
+      providers: p.providers.join(','),
+      limit: p.limit,
+      maxDistance: p.maxDistance,
+      minBattery: p.minBattery,
+    };
+  },
+  (state) => {
+    if (!state) {
+      window.history.replaceState({}, '', window.location.pathname);
+      return;
+    }
+    const params = new URLSearchParams();
+    params.set('lat', state.lat.toString());
+    params.set('lng', state.lng.toString());
+    if (state.providers !== ALL_PROVIDERS.join(','))
+      params.set('providers', state.providers);
+    if (state.limit !== FILTER_BOUNDS.limit.default)
+      params.set('limit', state.limit.toString());
+    if (state.maxDistance !== FILTER_BOUNDS.maxDistance.default)
+      params.set('maxDist', (state.maxDistance === UNSET ? 0 : state.maxDistance).toString());
+    if (state.minBattery !== FILTER_BOUNDS.minBattery.default)
+      params.set('minBat', (state.minBattery === UNSET ? 0 : state.minBattery).toString());
+    window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
+  },
+);
 
 const { bikes, loading, error, nextRefresh } = useBikes({
   proxyBase: import.meta.env.VITE_BACK_URL || 'http://localhost:13001',

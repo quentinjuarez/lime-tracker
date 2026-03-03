@@ -303,18 +303,17 @@ function copyLink() {
   const params = new URLSearchParams();
   params.set('lat', p.lat.toString());
   params.set('lng', p.lng.toString());
-  params.set('providers', draft.providers.join(','));
-  params.set('limit', draft.limit.toString());
-  params.set(
-    'maxDist',
-    (draft.maxDistance === UNSET ? 0 : draft.maxDistance).toString(),
-  );
-  params.set(
-    'minBat',
-    (draft.minBattery === UNSET ? 0 : draft.minBattery).toString(),
-  );
+  if (draft.providers.join(',') !== ['lime', 'voi', 'dott'].join(','))
+    params.set('providers', draft.providers.join(','));
+  if (draft.limit !== FILTER_BOUNDS.limit.default)
+    params.set('limit', draft.limit.toString());
+  if (draft.maxDistance !== FILTER_BOUNDS.maxDistance.default)
+    params.set('maxDist', (draft.maxDistance === UNSET ? 0 : draft.maxDistance).toString());
+  if (draft.minBattery !== FILTER_BOUNDS.minBattery.default)
+    params.set('minBat', (draft.minBattery === UNSET ? 0 : draft.minBattery).toString());
 
-  const url = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+  const qs = params.toString();
+  const url = `${window.location.origin}${window.location.pathname}${qs ? `?${qs}` : ''}`;
   navigator.clipboard.writeText(url).then(() => {
     linkCopied.value = true;
     setTimeout(() => (linkCopied.value = false), 2000);

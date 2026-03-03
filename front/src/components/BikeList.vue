@@ -33,12 +33,12 @@
 
           <!-- Header row -->
           <div
-            class="grid grid-cols-[80px_1fr_60px_100px] gap-2 px-4 py-2 border-b border-led/30 text-led/80 text-[11px] uppercase tracking-widest *:glow-sm"
+            class="grid grid-cols-[80px_1fr_60px_100px] gap-2 px-4 py-2 border-b border-led/30 text-led/80 text-[11px] uppercase tracking-widest"
           >
-            <span>Provider</span>
-            <span>Vehicle</span>
-            <span class="text-right">Batt.</span>
-            <span class="text-right">Dist.</span>
+            <span class="glow-sm">Provider</span>
+            <span class="glow-sm">Vehicle</span>
+            <span class="text-right glow-sm">Batt.</span>
+            <span class="text-right glow-sm">Dist.</span>
           </div>
 
           <!-- Rows -->

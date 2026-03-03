@@ -52,7 +52,7 @@ body,
 
 /* ── Light mode ─────────────────────────────────────────────────── */
 html.light {
-  --color-led: #683700;
+  --color-led: #834800;
   color-scheme: light;
 }
 

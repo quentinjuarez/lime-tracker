@@ -17,11 +17,11 @@
       <!-- User -->
       <l-circle-marker
         :lat-lng="[userLat, userLng]"
-        :radius="10"
+        :radius="7"
         color="#ad46ff"
         :fill="true"
         fill-color="#ad46ff"
-        :fill-opacity="0.9"
+        :fill-opacity="0.333"
       >
         <l-tooltip :options="{ permanent: false }">Me</l-tooltip>
       </l-circle-marker>
@@ -35,7 +35,7 @@
         :color="markerColor(bike.provider)"
         :fill="true"
         :fill-color="markerColor(bike.provider)"
-        :fill-opacity="0.85"
+        :fill-opacity="0.333"
       >
         <l-tooltip
           :options="{ permanent: false, sticky: true, interactive: false }"

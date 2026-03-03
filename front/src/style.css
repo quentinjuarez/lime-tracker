@@ -6,6 +6,23 @@
   --color-led: #f97316;
 }
 
+@utility glow-sm {
+  text-shadow: 0 0 4px currentColor;
+}
+
+@utility glow {
+  text-shadow:
+    0 0 6px currentColor,
+    0 0 12px currentColor;
+}
+
+@utility glow-lg {
+  text-shadow:
+    0 0 8px currentColor,
+    0 0 16px currentColor,
+    0 0 32px currentColor;
+}
+
 html,
 body,
 #app {
@@ -30,10 +47,4 @@ body,
 }
 ::-webkit-scrollbar-thumb:hover {
   background: color-mix(in srgb, var(--color-led) 40%, transparent);
-}
-
-.led-glow {
-  text-shadow:
-    0 0 6px currentColor,
-    0 0 12px currentColor;
 }

@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import {
   type ProfileData,
+  type ProfileMode,
   type Provider,
   createDefaultProfile,
   FILTER_BOUNDS,
@@ -23,6 +24,12 @@ export const useProfileStore = defineStore('profile', {
       if (!this.activeProfileId) return null;
       return this.profiles.find((p) => p.id === this.activeProfileId) ?? null;
     },
+    geoProfile(): ProfileData | null {
+      return this.profiles.find((p) => p.mode === 'geolocation') ?? null;
+    },
+    customProfile(): ProfileData | null {
+      return this.profiles.find((p) => p.mode === 'custom') ?? null;
+    },
     hasActiveProfile(): boolean {
       return this.activeProfile !== null;
     },
@@ -32,22 +39,20 @@ export const useProfileStore = defineStore('profile', {
   },
 
   actions: {
-    // ── Profile CRUD ─────────────────────────────────────────────────
+    // ── Profile management ───────────────────────────────────────────
 
-    createProfile(name: string): ProfileData {
-      const profile = createDefaultProfile(name);
+    /** Create (or reuse) the profile for the given mode and activate it. */
+    ensureProfile(mode: ProfileMode): ProfileData {
+      const existing = this.profiles.find((p) => p.mode === mode);
+      if (existing) {
+        this.activeProfileId = existing.id;
+        return existing;
+      }
+      const name = mode === 'geolocation' ? 'GPS' : 'Custom';
+      const profile = createDefaultProfile(name, mode);
       this.profiles.push(profile);
       this.activeProfileId = profile.id;
       return profile;
-    },
-
-    deleteProfile(id: string) {
-      const idx = this.profiles.findIndex((p) => p.id === id);
-      if (idx === -1) return;
-      this.profiles.splice(idx, 1);
-      if (this.activeProfileId === id) {
-        this.activeProfileId = this.profiles[0]?.id ?? null;
-      }
     },
 
     selectProfile(id: string) {
@@ -109,7 +114,7 @@ export const useProfileStore = defineStore('profile', {
     resetActiveProfile() {
       const p = this.activeProfile;
       if (!p) return;
-      const defaults = createDefaultProfile(p.name);
+      const defaults = createDefaultProfile(p.name, p.mode);
       Object.assign(p, { ...defaults, id: p.id });
     },
   },

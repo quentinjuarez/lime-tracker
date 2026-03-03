@@ -18,15 +18,16 @@
         <div class="p-6 space-y-6">
           <!-- Header -->
           <div class="flex items-center justify-between">
-            <h2 class="text-lg font-bold uppercase tracking-widest led-glow">
+            <h2 class="text-lg font-bold uppercase tracking-widest glow">
               Settings
             </h2>
-            <button
-              class="text-led/50 hover:text-led transition-colors text-xl"
+            <BaseButton
+              variant="ghost"
+              class="p-0 text-xl"
               @click="$emit('close')"
             >
               ✕
-            </button>
+            </BaseButton>
           </div>
 
           <!-- ── Profile selector ─────────────────────────────────── -->
@@ -56,31 +57,34 @@
 
             <!-- New profile -->
             <div class="flex gap-2">
-              <input
+              <BaseInput
                 v-model.trim="newProfileName"
                 type="text"
                 placeholder="New profile…"
                 maxlength="30"
-                class="flex-1 bg-black border border-led/30 text-led text-xs font-mono px-3 py-1.5 rounded-lg focus:border-led/60 focus:outline-none placeholder:text-led/30"
+                size="sm"
+                class="flex-1"
                 @keydown.enter="addProfile"
               />
-              <button
+              <BaseButton
+                size="sm"
                 :disabled="!newProfileName"
-                class="text-xs px-3 py-1.5 rounded-lg border border-led/40 text-led hover:bg-led/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                 @click="addProfile"
               >
                 +
-              </button>
+              </BaseButton>
             </div>
 
             <!-- Delete current -->
-            <button
+            <BaseButton
               v-if="store.profiles.length > 1 && store.activeProfile"
-              class="text-[11px] text-red-400/70 hover:text-red-400 transition-colors"
+              variant="danger-ghost"
+              size="sm"
+              class="p-0 text-[11px]"
               @click="store.deleteProfile(store.activeProfile!.id)"
             >
               Delete "{{ store.activeProfile.name }}"
-            </button>
+            </BaseButton>
           </section>
 
           <template v-if="store.activeProfile">
@@ -89,16 +93,49 @@
               <h3 class="text-xs uppercase tracking-widest text-led/60">
                 Location
               </h3>
-              <button
-                :disabled="geoLoading"
-                class="text-xs px-3 py-1.5 rounded-lg border border-led/40 text-led hover:bg-led/10 transition-colors disabled:opacity-30"
-                @click="relocate"
-              >
-                📍 {{ geoLoading ? 'Locating…' : 'Update GPS position' }}
-              </button>
-              <div v-if="geoError" class="text-red-400 text-xs">
-                {{ geoError }}
-              </div>
+
+              <!-- GPS profile → relocate button -->
+              <template v-if="store.activeProfile.mode === 'geolocation'">
+                <BaseButton size="sm" :disabled="geoLoading" @click="relocate">
+                  📍 {{ geoLoading ? 'Locating…' : 'Update GPS position' }}
+                </BaseButton>
+                <div v-if="geoError" class="text-red-400 text-xs">
+                  {{ geoError }}
+                </div>
+              </template>
+
+              <!-- Custom profile → location parser input -->
+              <template v-else>
+                <BaseInput
+                  v-model="locationRaw"
+                  type="text"
+                  placeholder="Paste coordinates or link…"
+                  size="sm"
+                  class="w-full"
+                  @keydown.enter="applyCustomLocation"
+                />
+                <div
+                  v-if="locationRaw && parsedLoc"
+                  class="text-xs text-green-400"
+                >
+                  ✓ {{ parsedLoc.lat.toFixed(5) }},
+                  {{ parsedLoc.lng.toFixed(5) }}
+                </div>
+                <div
+                  v-else-if="locationRaw && !parsedLoc"
+                  class="text-xs text-red-400"
+                >
+                  Could not parse
+                </div>
+                <BaseButton
+                  size="sm"
+                  :disabled="!parsedLoc"
+                  @click="applyCustomLocation"
+                >
+                  Apply
+                </BaseButton>
+              </template>
+
               <div
                 v-if="store.hasPosition"
                 class="text-xs text-led/40 font-mono"
@@ -247,12 +284,14 @@
             </section>
 
             <!-- Reset -->
-            <button
-              class="w-full py-2 px-4 rounded-md text-xs uppercase tracking-wider border border-red-800/50 text-red-400 hover:bg-red-900/20 transition-colors"
+            <BaseButton
+              variant="danger"
+              size="sm"
+              class="w-full"
               @click="store.resetActiveProfile()"
             >
               Reset profile to defaults
-            </button>
+            </BaseButton>
           </template>
         </div>
       </div>
@@ -261,9 +300,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import BaseButton from './BaseButton.vue';
+import BaseInput from './BaseInput.vue';
 import { useProfileStore } from '../stores/profile';
 import { useGeolocation } from '../composables/useGeolocation';
+import { parseLocation } from '../utils/parseLocation';
 import { type Provider, FILTER_BOUNDS, UNSET } from '../types';
 
 defineProps<{
@@ -277,31 +319,26 @@ defineEmits<{
 const store = useProfileStore();
 const { error: geoError, loading: geoLoading, locate } = useGeolocation();
 
-const newProfileName = ref('');
+const locationRaw = ref('');
+const parsedLoc = computed(() => parseLocation(locationRaw.value));
 
 const allProviders: { id: Provider; colorClass: string }[] = [
   { id: 'lime', colorClass: 'text-lime-brand' },
   { id: 'voi', colorClass: 'text-voi-brand' },
 ];
 
-function addProfile() {
-  if (!newProfileName.value) return;
-  store.createProfile(newProfileName.value);
-  newProfileName.value = '';
-}
-
 function relocate() {
   locate();
+}
+
+function applyCustomLocation() {
+  if (!parsedLoc.value) return;
+  store.setPosition(parsedLoc.value.lat, parsedLoc.value.lng);
+  locationRaw.value = '';
 }
 </script>
 
 <style scoped>
-.led-glow {
-  text-shadow:
-    0 0 6px currentColor,
-    0 0 12px currentColor;
-}
-
 /* Slider styling */
 .slider {
   -webkit-appearance: none;

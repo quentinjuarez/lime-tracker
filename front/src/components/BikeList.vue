@@ -4,7 +4,7 @@
     <div class="mx-auto max-w-3xl p-4">
       <!-- Header row -->
       <div
-        class="grid grid-cols-[80px_1fr_60px_100px] gap-2 px-4 py-2 border-b border-led/30 text-led/70 text-[11px] uppercase tracking-widest led-glow"
+        class="grid grid-cols-[80px_1fr_60px_100px] gap-2 px-4 py-2 border-b border-led/30 text-led/70 text-[11px] uppercase tracking-widest glow"
       >
         <span>Provider</span>
         <span>Vehicle</span>
@@ -21,29 +21,27 @@
       >
         <!-- Provider pill -->
         <span
-          class="text-sm font-bold uppercase tracking-wide led-glow"
+          class="text-sm font-bold uppercase tracking-wide glow"
           :class="b.provider === 'lime' ? 'text-lime-brand' : 'text-voi-brand'"
         >
           {{ b.provider }}
         </span>
 
         <!-- Vehicle ID -->
-        <span class="text-led text-sm tracking-wider led-glow truncate">
+        <span class="text-led text-sm tracking-wider glow truncate">
           {{ b.bike_id }}
         </span>
 
         <!-- Battery -->
         <span
-          class="text-right text-sm font-bold tracking-wide led-glow"
+          class="text-right text-sm font-bold tracking-wide glow"
           :class="batteryColor(b.battery_percent)"
         >
           {{ b.battery_percent != null ? `${b.battery_percent}%` : '---' }}
         </span>
 
         <!-- Distance -->
-        <span
-          class="text-right text-led text-sm font-bold tracking-wide led-glow"
-        >
+        <span class="text-right text-led text-sm font-bold tracking-wide glow">
           {{ formatDistance(b.distance) }}
         </span>
       </div>
@@ -79,11 +77,3 @@ function batteryColor(pct?: number): string {
   return 'text-red-400';
 }
 </script>
-
-<style scoped>
-.led-glow {
-  text-shadow:
-    0 0 6px currentColor,
-    0 0 12px currentColor;
-}
-</style>

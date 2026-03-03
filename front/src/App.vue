@@ -1,9 +1,7 @@
 <template>
   <div class="relative w-screen h-screen overflow-hidden bg-black">
-    <!-- ── Onboarding: no profile or no position ───────────────────── -->
     <OnboardingScreen v-if="!store.hasActiveProfile || !store.hasPosition" />
 
-    <!-- ── Main app: ready ─────────────────────────────────────────── -->
     <template v-else>
       <BikeMap
         v-show="activeTab === 'map'"
@@ -20,7 +18,7 @@
       </div>
     </template>
 
-    <!-- ── HUD (only when ready) ───────────────────────────────────── -->
+    <!-- HUD -->
     <template v-if="store.hasActiveProfile && store.hasPosition">
       <!-- Tabs – top left -->
       <div class="fixed top-4 left-16 z-1000 flex gap-2">
@@ -86,15 +84,14 @@
       ⚙ Settings
     </button>
 
-    <!-- Active profile name – top left corner -->
+    <!-- Active profile badge – top left corner -->
     <div
       v-if="store.activeProfile"
-      class="fixed top-4 left-4 z-1000 bg-black/80 backdrop-blur text-led text-xs font-mono px-3 py-2 rounded-lg shadow-lg border border-led/20 truncate max-w-[120px]"
+      class="fixed top-4 left-4 z-1000 bg-black/80 backdrop-blur text-led text-xs font-mono px-3 py-2 rounded-lg shadow-lg border border-led/20 truncate max-w-[140px]"
     >
-      {{ store.activeProfile.name }}
+      {{ store.activeProfile.mode === 'geolocation' ? '📍 GPS' : '🗺️ Custom' }}
     </div>
 
-    <!-- Settings panel -->
     <SettingsPanel :open="showSettings" @close="showSettings = false" />
   </div>
 </template>

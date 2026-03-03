@@ -8,8 +8,9 @@
       style="width: 100%; height: 100%"
     >
       <l-tile-layer
-        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-        attribution="&copy; OpenStreetMap &copy; CARTO"
+        :key="tileUrl"
+        :url="tileUrl"
+        :attribution="tileAttribution"
         layer-type="base"
       />
 
@@ -54,7 +55,12 @@
 
     <!-- Legend overlay -->
     <div
-      class="absolute bottom-4 left-4 bg-black/70 text-white text-xs px-3 py-2 rounded-lg z-1000 space-y-1"
+      class="absolute bottom-4 left-4 text-xs px-3 py-2 rounded-lg z-1000 space-y-1 border"
+      :class="
+        theme === 'light'
+          ? 'bg-white/80 text-gray-800 border-gray-200'
+          : 'bg-black/70 text-white border-transparent'
+      "
     >
       <div class="flex items-center gap-2">
         <span class="w-3 h-3 rounded-full bg-purple-500 inline-block"></span>
@@ -86,12 +92,28 @@ import {
 } from '@vue-leaflet/vue-leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { Bike, Provider } from '../composables/useBikes';
+import { useTheme } from '../composables/useTheme';
 
 const props = defineProps<{
   bikes: Bike[];
   userLat: number;
   userLng: number;
 }>();
+
+const { theme } = useTheme();
+
+const TILE_DARK =
+  'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+const TILE_LIGHT =
+  'https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png';
+const tileUrl = computed(() =>
+  theme.value === 'light' ? TILE_LIGHT : TILE_DARK,
+);
+const tileAttribution = computed(() =>
+  theme.value === 'light'
+    ? '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    : '&copy; OpenStreetMap &copy; CARTO',
+);
 
 const ready = ref(false);
 
@@ -174,18 +196,6 @@ function formatDistance(m?: number) {
   backdrop-filter: blur(8px);
 }
 
-:deep(.leaflet-control-attribution a) {
-  display: none !important;
-}
-
-:deep(.leaflet-control-attribution span) {
-  display: none !important;
-}
-
-:deep(.leaflet-control-attribution a:hover) {
-  color: var(--color-led) !important;
-}
-
 /* Tooltip */
 :deep(.leaflet-tooltip) {
   background: rgba(0, 0, 0, 0.85) !important;
@@ -196,6 +206,18 @@ function formatDistance(m?: number) {
   border-radius: 6px !important;
   padding: 6px 10px !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+}
+
+:deep(.leaflet-control-attribution a) {
+  display: none !important;
+}
+
+:deep(.leaflet-control-attribution span) {
+  display: none !important;
+}
+
+:deep(.leaflet-control-attribution a:hover) {
+  color: var(--color-led) !important;
 }
 
 :deep(.leaflet-tooltip-top::before) {
@@ -209,5 +231,43 @@ function formatDistance(m?: number) {
 }
 :deep(.leaflet-tooltip-right::before) {
   border-right-color: rgba(0, 0, 0, 0.85) !important;
+}
+</style>
+
+<style>
+/* ── Light mode overrides for Leaflet controls ─────────────────── */
+html.light .leaflet-control-zoom a {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #1a1a1a !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+}
+html.light .leaflet-control-zoom a:hover {
+  background: rgba(0, 0, 0, 0.06) !important;
+}
+html.light .leaflet-control-zoom a.leaflet-disabled {
+  background: rgba(255, 255, 255, 0.6) !important;
+  color: rgba(0, 0, 0, 0.3) !important;
+}
+html.light .leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.8) !important;
+  color: rgba(0, 0, 0, 0.5) !important;
+}
+html.light .leaflet-tooltip {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  color: #1a1a1a !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+}
+html.light .leaflet-tooltip-top::before {
+  border-top-color: rgba(255, 255, 255, 0.95) !important;
+}
+html.light .leaflet-tooltip-bottom::before {
+  border-bottom-color: rgba(255, 255, 255, 0.95) !important;
+}
+html.light .leaflet-tooltip-left::before {
+  border-left-color: rgba(255, 255, 255, 0.95) !important;
+}
+html.light .leaflet-tooltip-right::before {
+  border-right-color: rgba(255, 255, 255, 0.95) !important;
 }
 </style>

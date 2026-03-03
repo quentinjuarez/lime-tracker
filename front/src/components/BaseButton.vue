@@ -2,7 +2,7 @@
   <button
     type="button"
     :class="[
-      'rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider',
+      'rounded-lg transition-colors backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider',
       {
         // sizes
         'text-sm px-4 py-2.5': size === 'md',

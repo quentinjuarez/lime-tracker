@@ -22,9 +22,24 @@
             <h2 class="text-lg font-bold uppercase tracking-widest glow-sm">
               Settings
             </h2>
-            <BaseButton variant="ghost" size="sm" class="px-2!" @click="save">
-              ✕
-            </BaseButton>
+            <div class="flex items-center gap-2">
+              <BaseButton
+                variant="ghost"
+                size="sm"
+                class="px-2!"
+                :title="
+                  theme === 'dark'
+                    ? 'Switch to light mode'
+                    : 'Switch to dark mode'
+                "
+                @click="toggleTheme"
+              >
+                {{ theme === 'dark' ? '☀️' : '🌙' }}
+              </BaseButton>
+              <BaseButton variant="ghost" size="sm" class="px-2!" @click="save">
+                ✕
+              </BaseButton>
+            </div>
           </div>
 
           <template v-if="store.activeProfile">
@@ -51,7 +66,7 @@
                   @click="locate"
                 >
                   <SpinnerIcon v-if="geoLoading" size="sm" class="mr-1" />
-                  📍 {{ geoLoading ? 'Locating…' : 'Update GPS position' }}
+                  {{ geoLoading ? 'Locating…' : 'Update GPS position' }}
                 </BaseButton>
                 <div v-if="geoError" class="text-red-400 text-xs">
                   {{ geoError }}
@@ -74,7 +89,7 @@
                     class="w-full"
                     @click="openLocationPicker"
                   >
-                    📍 Modifier la localisation
+                    Change location
                   </BaseButton>
                 </template>
                 <template v-else>
@@ -197,6 +212,7 @@
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue';
 import BaseButton from './BaseButton.vue';
+import { useTheme } from '../composables/useTheme';
 import BaseSlider from './BaseSlider.vue';
 import LocationPicker from './LocationPicker.vue';
 import SpinnerIcon from './SpinnerIcon.vue';
@@ -214,6 +230,7 @@ const emit = defineEmits<{
 
 const store = useProfileStore();
 const { error: geoError, loading: geoLoading, locate } = useGeolocation();
+const { theme, toggleTheme } = useTheme();
 
 const showLocationPicker = ref(false);
 const locationPickerRef = ref<InstanceType<typeof LocationPicker> | null>(null);

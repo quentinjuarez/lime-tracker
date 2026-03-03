@@ -32,7 +32,7 @@
 
         <!-- Refresh badge – top right -->
         <div
-          class="w-16 flex justify-center items-center bg-black/10 text-led text-xs font-mono px-3 py-1.5 rounded-lg border border-led/80"
+          class="w-16 flex justify-center items-center backdrop-blur-sm bg-black/10 text-led text-xs font-mono px-3 py-1.5 rounded-lg border border-led/80"
         >
           <SpinnerIcon v-if="loading" size="sm" />
           <span v-if="!loading">↻ {{ nextRefresh }}s</span>
@@ -66,9 +66,10 @@ import BikeList from './components/BikeList.vue';
 import SpinnerIcon from './components/SpinnerIcon.vue';
 import SettingsPanel from './components/SettingsPanel.vue';
 import BaseButton from './components/BaseButton.vue';
+import { useTheme } from './composables/useTheme';
 
 const store = useProfileStore();
-
+useTheme();
 const showList = ref(false);
 const showSettings = ref(false);
 

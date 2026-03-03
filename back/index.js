@@ -74,6 +74,11 @@ const PROVIDERS = {
     gbfs: '/gbfs.json',
     freeBikes: '/free_bike_status.json',
   },
+  dott: {
+    base: 'https://gbfs.api.ridedott.com/public/v2/paris',
+    gbfs: '/gbfs.json',
+    freeBikes: '/free_bike_status.json',
+  },
 };
 
 const VALID_PROVIDERS = new Set(Object.keys(PROVIDERS));

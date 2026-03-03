@@ -223,6 +223,7 @@ const parsedLoc = computed(() => parseLocation(locationRaw.value));
 const allProviders: { id: Provider; colorClass: string }[] = [
   { id: 'lime', colorClass: 'text-lime-brand' },
   { id: 'voi', colorClass: 'text-voi-brand' },
+  { id: 'dott', colorClass: 'text-dott-brand' },
 ];
 
 // ── Draft state (buffered until Save) ───────────────────────────────

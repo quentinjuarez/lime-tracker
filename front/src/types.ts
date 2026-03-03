@@ -1,12 +1,13 @@
 // ── Providers ───────────────────────────────────────────────────────
 
-export type Provider = 'lime' | 'voi';
+export type Provider = 'lime' | 'voi' | 'dott';
 
-export const ALL_PROVIDERS: Provider[] = ['lime', 'voi'];
+export const ALL_PROVIDERS: Provider[] = ['lime', 'voi', 'dott'];
 
 export const PROVIDER_COLORS: Record<Provider, string> = {
   lime: '#00de00',
   voi: '#f44336',
+  dott: '#f5a623',
 };
 
 // ── Vehicle types ───────────────────────────────────────────────────
@@ -28,6 +29,9 @@ export type LimeVehicleTypeId = '1' | '2' | '3' | '4';
 
 // Voi vehicle type IDs
 export type VoiVehicleTypeId = 'voi_scooter' | 'voi_bike';
+
+// Dott vehicle type IDs
+export type DottVehicleTypeId = 'dott_bicycle';
 
 export const VEHICLE_TYPES: Record<string, VehicleType> = {
   // Lime
@@ -70,6 +74,14 @@ export const VEHICLE_TYPES: Record<string, VehicleType> = {
     name: 'bicycle',
     rider_capacity: 1,
     max_range_meters: 80000,
+  },
+  // Dott
+  dott_bicycle: {
+    vehicle_type_id: 'dott_bicycle',
+    form_factor: 'bicycle',
+    propulsion_type: 'electric_assist',
+    name: 'bicycle',
+    max_range_meters: 100000,
   },
 };
 

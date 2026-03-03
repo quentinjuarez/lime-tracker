@@ -1,8 +1,9 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-lime-brand: #00de00;
-  --color-voi-brand: #f44336;
+  --color-lime-brand: #04dd01;
+  --color-voi-brand: #f26a61;
+  --color-dott-brand: #00a8e8;
   --color-led: #ffa500;
 }
 

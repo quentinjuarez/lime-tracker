@@ -24,7 +24,11 @@
         <!-- Provider pill -->
         <span
           class="text-sm font-bold uppercase tracking-wide glow"
-          :class="b.provider === 'lime' ? 'text-lime-brand' : 'text-voi-brand'"
+          :class="{
+            'text-lime-brand': b.provider === 'lime',
+            'text-voi-brand': b.provider === 'voi',
+            'text-dott-brand': b.provider === 'dott',
+          }"
         >
           {{ b.provider }}
         </span>

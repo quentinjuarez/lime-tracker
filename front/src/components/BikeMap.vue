@@ -17,9 +17,9 @@
       <l-circle-marker
         :lat-lng="[userLat, userLng]"
         :radius="10"
-        color="#3b82f6"
+        color="#3B2077"
         :fill="true"
-        fill-color="#3b82f6"
+        fill-color="#3B2077"
         :fill-opacity="0.9"
       >
         <l-tooltip :options="{ permanent: false }">Me</l-tooltip>
@@ -68,6 +68,10 @@
         <span class="w-3 h-3 rounded-full inline-block bg-voi-brand"></span>
         Voi
       </div>
+      <div class="flex items-center gap-2">
+        <span class="w-3 h-3 rounded-full inline-block bg-dott-brand"></span>
+        Dott
+      </div>
     </div>
   </div>
 </template>
@@ -101,9 +105,13 @@ const zoom = 17;
 const center = computed<[number, number]>(() => [props.userLat, props.userLng]);
 
 // Leaflet needs raw hex values
+// --color-lime-brand: #04dd01;
+// --color-voi-brand: #f26a61;
+// --color-dott-brand: #00a8e8;
 const PROVIDER_HEX: Record<Provider, string> = {
-  lime: '#00de00',
-  voi: '#f44336',
+  lime: '#04dd01',
+  voi: '#f26a61',
+  dott: '#00a8e8',
 };
 
 function markerColor(provider: Provider): string {

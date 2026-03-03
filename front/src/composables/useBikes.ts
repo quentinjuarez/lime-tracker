@@ -56,12 +56,14 @@ export function useBikes(opts?: { proxyBase?: string }) {
           ? Number(b.current_range_meters)
           : undefined;
       const battery_percent =
-        current_range_meters != null && max_range_meters
-          ? Math.min(
-              100,
-              Math.round((current_range_meters / max_range_meters) * 100),
-            )
-          : undefined;
+        b.current_fuel_percent != null
+          ? Math.min(100, Math.round(Number(b.current_fuel_percent) * 100))
+          : current_range_meters != null && max_range_meters
+            ? Math.min(
+                100,
+                Math.round((current_range_meters / max_range_meters) * 100),
+              )
+            : undefined;
       return {
         bike_id: b.bike_id,
         lat,

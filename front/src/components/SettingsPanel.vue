@@ -65,8 +65,10 @@
                   :disabled="geoLoading"
                   @click="locate"
                 >
-                  <SpinnerIcon v-if="geoLoading" size="sm" class="mr-1" />
-                  {{ geoLoading ? 'Locating…' : 'Update GPS position' }}
+                  <SpinnerIcon v-if="geoLoading" size="sm" />
+                  <span>
+                    {{ geoLoading ? 'Locating…' : 'Update GPS position' }}
+                  </span>
                 </BaseButton>
                 <div v-if="geoError" class="text-red-400 text-xs">
                   {{ geoError }}
@@ -100,7 +102,6 @@
                   <BaseButton
                     variant="ghost"
                     size="sm"
-                    class="p-0 text-[11px]"
                     @click="showLocationPicker = false"
                   >
                     ← Annuler
@@ -218,7 +219,7 @@ import LocationPicker from './LocationPicker.vue';
 import SpinnerIcon from './SpinnerIcon.vue';
 import { useProfileStore } from '../stores/profile';
 import { useGeolocation } from '../composables/useGeolocation';
-import { type Provider, FILTER_BOUNDS, UNSET } from '../types';
+import { type Provider, ALL_PROVIDERS, FILTER_BOUNDS, UNSET } from '../types';
 
 const props = defineProps<{
   open: boolean;
@@ -291,9 +292,7 @@ function toggleDraftProvider(id: Provider) {
 }
 
 function resetDraft() {
-  draft.providers = store.activeProfile
-    ? [...store.activeProfile.providers]
-    : ['lime', 'voi'];
+  draft.providers = [...ALL_PROVIDERS];
   draft.limit = FILTER_BOUNDS.limit.default;
   draft.maxDistance = FILTER_BOUNDS.maxDistance.default;
   draft.minBattery = FILTER_BOUNDS.minBattery.default;

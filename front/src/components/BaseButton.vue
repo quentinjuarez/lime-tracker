@@ -1,6 +1,7 @@
 <template>
   <button
     type="button"
+    class="flex items-center justify-center gap-1"
     :class="[
       'rounded-lg transition-colors backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider',
       {

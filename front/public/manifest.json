@@ -1,11 +1,11 @@
 {
   "name": "Bike Tracker",
   "short_name": "Bike Tracker",
-  "description": "Find Lime & Voi e-scooters and e-bikes near you in real time",
+  "description": "Find Lime, Voi or Dott vehicles near you.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",
-  "theme_color": "#f97316",
+  "theme_color": "#ffa500",
   "icons": [
     {
       "src": "/icon-192.png",

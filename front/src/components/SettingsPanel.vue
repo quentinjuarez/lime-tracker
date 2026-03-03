@@ -10,7 +10,7 @@
     <Transition name="slide">
       <div
         v-if="open"
-        class="fixed bottom-0 left-0 right-0 max-h-[85dvh] rounded-t-2xl border-t border-led/20 bg-black/95 z-2001 overflow-y-auto font-mono text-led md:top-0 md:bottom-auto md:left-auto md:right-0 md:h-full md:max-h-none md:w-80 md:rounded-none md:border-t-0 md:border-l"
+        class="fixed bottom-0 left-0 right-0 max-h-[85dvh] rounded-t-2xl border-t border-led/20 bg-black/95 z-2001 overflow-y-auto font-mono text-led md:top-0 md:bottom-auto md:left-auto md:right-0 md:h-full md:max-h-none md:w-xl md:rounded-none md:border-t-0 md:border-l"
       >
         <!-- Mobile drag handle -->
         <div class="flex justify-center pt-3 pb-1 md:hidden" v-if="false">
@@ -27,34 +27,30 @@
             </BaseButton>
           </div>
 
-          <!-- ── Profile selector ─────────────────────────────────── -->
-          <section class="space-y-3">
-            <h3 class="text-xs uppercase tracking-widest text-led/80">
-              Profile
-            </h3>
-
-            <!-- Active profile select -->
-            <BaseSelect
-              v-if="store.profiles.length"
-              :model-value="store.activeProfileId ?? ''"
-              @update:model-value="store.selectProfile"
-            >
-              <option v-for="p in store.profiles" :key="p.id" :value="p.id">
-                {{ p.name }}
-              </option>
-            </BaseSelect>
-          </section>
-
           <template v-if="store.activeProfile">
             <!-- ── Location ─────────────────────────────────────────── -->
-            <section class="space-y-2">
+            <section class="space-y-3">
               <h3 class="text-xs uppercase tracking-widest text-led/80">
                 Location
               </h3>
 
-              <!-- GPS profile → relocate button -->
+              <!-- GPS profile: direct update button -->
               <template v-if="store.activeProfile.mode === 'geolocation'">
-                <BaseButton size="sm" :disabled="geoLoading" @click="relocate">
+                <div
+                  v-if="store.hasPosition"
+                  class="text-xs text-led/60 font-mono"
+                >
+                  {{ store.activeProfile.lat?.toFixed(5) }},
+                  {{ store.activeProfile.lng?.toFixed(5) }}
+                </div>
+                <div v-else class="text-xs text-led/40">No position set</div>
+                <BaseButton
+                  size="sm"
+                  class="w-full"
+                  :disabled="geoLoading"
+                  @click="locate"
+                >
+                  <SpinnerIcon v-if="geoLoading" size="sm" class="mr-1" />
                   📍 {{ geoLoading ? 'Locating…' : 'Update GPS position' }}
                 </BaseButton>
                 <div v-if="geoError" class="text-red-400 text-xs">
@@ -62,58 +58,40 @@
                 </div>
               </template>
 
-              <!-- Custom profile → location parser input -->
+              <!-- Custom profile: picker to change via GPS or manual input -->
               <template v-else>
-                <BaseButton size="sm" :disabled="geoLoading" @click="useGps">
-                  📍 {{ geoLoading ? 'Locating…' : 'Use GPS' }}
-                </BaseButton>
-                <div v-if="geoError" class="text-red-400 text-xs">
-                  {{ geoError }}
-                </div>
-                <div
-                  class="text-led/40 text-[11px] text-center uppercase tracking-widest"
-                >
-                  or
-                </div>
-                <BaseInput
-                  v-model="locationRaw"
-                  type="text"
-                  placeholder="Paste coordinates or link…"
-                  size="sm"
-                  class="w-full"
-                  @keydown.enter="applyCustomLocation"
-                />
-                <div
-                  v-if="locationRaw && parsedLoc"
-                  class="text-xs text-green-400"
-                >
-                  ✓ {{ parsedLoc.lat.toFixed(5) }},
-                  {{ parsedLoc.lng.toFixed(5) }}
-                </div>
-                <div
-                  v-else-if="locationRaw && !parsedLoc"
-                  class="text-xs text-red-400"
-                >
-                  Could not parse
-                </div>
-                <BaseButton
-                  size="sm"
-                  class="w-full text-center"
-                  :disabled="!parsedLoc"
-                  @click="applyCustomLocation"
-                >
-                  Apply
-                </BaseButton>
+                <template v-if="!showLocationPicker">
+                  <div
+                    v-if="store.hasPosition"
+                    class="text-xs text-led/60 font-mono"
+                  >
+                    {{ store.activeProfile.lat?.toFixed(5) }},
+                    {{ store.activeProfile.lng?.toFixed(5) }}
+                  </div>
+                  <div v-else class="text-xs text-led/40">No position set</div>
+                  <BaseButton
+                    size="sm"
+                    class="w-full"
+                    @click="openLocationPicker"
+                  >
+                    📍 Modifier la localisation
+                  </BaseButton>
+                </template>
+                <template v-else>
+                  <LocationPicker
+                    ref="locationPickerRef"
+                    @done="onLocationDone"
+                  />
+                  <BaseButton
+                    variant="ghost"
+                    size="sm"
+                    class="p-0 text-[11px]"
+                    @click="showLocationPicker = false"
+                  >
+                    ← Annuler
+                  </BaseButton>
+                </template>
               </template>
-
-              <div
-                v-if="store.hasPosition"
-                class="text-xs text-led/60 font-mono"
-              >
-                {{ store.activeProfile.lat?.toFixed(5) }},
-                {{ store.activeProfile.lng?.toFixed(5) }}
-              </div>
-              <div v-else class="text-xs text-led/40">No position set</div>
             </section>
 
             <!-- ── Providers ────────────────────────────────────────── -->
@@ -207,14 +185,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, reactive, watch } from 'vue';
+import { ref, reactive, watch } from 'vue';
 import BaseButton from './BaseButton.vue';
-import BaseInput from './BaseInput.vue';
-import BaseSelect from './BaseSelect.vue';
 import BaseSlider from './BaseSlider.vue';
+import LocationPicker from './LocationPicker.vue';
+import SpinnerIcon from './SpinnerIcon.vue';
 import { useProfileStore } from '../stores/profile';
 import { useGeolocation } from '../composables/useGeolocation';
-import { parseLocation } from '../utils/parseLocation';
 import { type Provider, FILTER_BOUNDS, UNSET } from '../types';
 
 const props = defineProps<{
@@ -228,8 +205,17 @@ const emit = defineEmits<{
 const store = useProfileStore();
 const { error: geoError, loading: geoLoading, locate } = useGeolocation();
 
-const locationRaw = ref('');
-const parsedLoc = computed(() => parseLocation(locationRaw.value));
+const showLocationPicker = ref(false);
+const locationPickerRef = ref<InstanceType<typeof LocationPicker> | null>(null);
+
+function openLocationPicker() {
+  showLocationPicker.value = true;
+  locationPickerRef.value?.reset();
+}
+
+function onLocationDone() {
+  showLocationPicker.value = false;
+}
 
 const allProviders: { id: Provider; colorClass: string }[] = [
   { id: 'lime', colorClass: 'text-lime-brand' },
@@ -261,7 +247,10 @@ const draft = reactive<Draft>(draftFromProfile());
 watch(
   () => [props.open, store.activeProfileId] as const,
   ([open]) => {
-    if (open) Object.assign(draft, draftFromProfile());
+    if (open) {
+      Object.assign(draft, draftFromProfile());
+      showLocationPicker.value = false;
+    }
   },
 );
 
@@ -293,19 +282,5 @@ function save() {
   store.setMaxDistance(draft.maxDistance);
   store.setMinBattery(draft.minBattery);
   emit('close');
-}
-
-function relocate() {
-  locate();
-}
-
-function useGps() {
-  locate();
-}
-
-function applyCustomLocation() {
-  if (!parsedLoc.value) return;
-  store.setPosition(parsedLoc.value.lat, parsedLoc.value.lng);
-  locationRaw.value = '';
 }
 </script>

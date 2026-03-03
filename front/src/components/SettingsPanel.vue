@@ -177,6 +177,16 @@
             >
               Reset to defaults
             </BaseButton>
+
+            <!-- Copy link -->
+            <BaseButton
+              variant="ghost"
+              size="sm"
+              class="w-full"
+              @click="copyLink"
+            >
+              {{ linkCopied ? '✓ Link copied!' : '🔗 Copy settings as link' }}
+            </BaseButton>
           </template>
         </div>
       </div>
@@ -282,5 +292,32 @@ function save() {
   store.setMaxDistance(draft.maxDistance);
   store.setMinBattery(draft.minBattery);
   emit('close');
+}
+
+const linkCopied = ref(false);
+
+function copyLink() {
+  const p = store.activeProfile;
+  if (!p || p.lat == null || p.lng == null) return;
+
+  const params = new URLSearchParams();
+  params.set('lat', p.lat.toString());
+  params.set('lng', p.lng.toString());
+  params.set('providers', draft.providers.join(','));
+  params.set('limit', draft.limit.toString());
+  params.set(
+    'maxDist',
+    (draft.maxDistance === UNSET ? 0 : draft.maxDistance).toString(),
+  );
+  params.set(
+    'minBat',
+    (draft.minBattery === UNSET ? 0 : draft.minBattery).toString(),
+  );
+
+  const url = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+  navigator.clipboard.writeText(url).then(() => {
+    linkCopied.value = true;
+    setTimeout(() => (linkCopied.value = false), 2000);
+  });
 }
 </script>

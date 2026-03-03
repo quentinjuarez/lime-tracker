@@ -56,9 +56,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useProfileStore } from './stores/profile';
 import { useBikes } from './composables/useBikes';
+import { type Provider, ALL_PROVIDERS, UNSET } from './types';
 import OnboardingScreen from './components/OnboardingScreen.vue';
 import BikeMap from './components/BikeMap.vue';
 import BikeList from './components/BikeList.vue';
@@ -70,6 +71,33 @@ const store = useProfileStore();
 
 const showList = ref(false);
 const showSettings = ref(false);
+
+onMounted(() => {
+  const params = new URLSearchParams(window.location.search);
+  const lat = parseFloat(params.get('lat') ?? '');
+  const lng = parseFloat(params.get('lng') ?? '');
+  if (!isNaN(lat) && !isNaN(lng)) {
+    const profile = store.ensureProfile('custom');
+    store.setPosition(lat, lng);
+
+    const rawProviders = params.get('providers');
+    if (rawProviders) {
+      const parsed = rawProviders
+        .split(',')
+        .filter((p): p is Provider => (ALL_PROVIDERS as string[]).includes(p));
+      if (parsed.length > 0) profile.providers = parsed;
+    }
+
+    const limit = parseInt(params.get('limit') ?? '');
+    if (!isNaN(limit)) store.setLimit(limit);
+
+    const maxDist = parseInt(params.get('maxDist') ?? '');
+    if (!isNaN(maxDist)) store.setMaxDistance(maxDist === 0 ? UNSET : maxDist);
+
+    const minBat = parseInt(params.get('minBat') ?? '');
+    if (!isNaN(minBat)) store.setMinBattery(minBat === 0 ? UNSET : minBat);
+  }
+});
 
 const { bikes, loading, error, nextRefresh } = useBikes({
   proxyBase: import.meta.env.VITE_BACK_URL || 'http://localhost:13001',

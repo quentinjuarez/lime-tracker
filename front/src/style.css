@@ -31,3 +31,9 @@ body,
 ::-webkit-scrollbar-thumb:hover {
   background: color-mix(in srgb, var(--color-led) 40%, transparent);
 }
+
+.led-glow {
+  text-shadow:
+    0 0 6px currentColor,
+    0 0 12px currentColor;
+}

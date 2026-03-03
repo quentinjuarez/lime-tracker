@@ -1,0 +1,149 @@
+// ── Providers ───────────────────────────────────────────────────────
+
+export type Provider = 'lime' | 'voi';
+
+export const ALL_PROVIDERS: Provider[] = ['lime', 'voi'];
+
+export const PROVIDER_COLORS: Record<Provider, string> = {
+  lime: '#00de00',
+  voi: '#f44336',
+};
+
+// ── Vehicle types ───────────────────────────────────────────────────
+
+export type FormFactor = 'scooter' | 'bicycle';
+export type PropulsionType = 'electric' | 'electric_assist' | 'human';
+
+export interface VehicleType {
+  vehicle_type_id: string;
+  form_factor: FormFactor;
+  propulsion_type: PropulsionType;
+  name?: string;
+  rider_capacity?: number;
+  max_range_meters?: number;
+}
+
+// Lime vehicle type IDs
+export type LimeVehicleTypeId = '1' | '2' | '3' | '4';
+
+// Voi vehicle type IDs
+export type VoiVehicleTypeId = 'voi_scooter' | 'voi_bike';
+
+export const VEHICLE_TYPES: Record<string, VehicleType> = {
+  // Lime
+  '1': {
+    vehicle_type_id: '1',
+    form_factor: 'scooter',
+    propulsion_type: 'electric',
+    max_range_meters: 24140,
+  },
+  '2': {
+    vehicle_type_id: '2',
+    form_factor: 'scooter',
+    propulsion_type: 'electric',
+    max_range_meters: 40233,
+  },
+  '3': {
+    vehicle_type_id: '3',
+    form_factor: 'bicycle',
+    propulsion_type: 'electric_assist',
+    max_range_meters: 85000,
+  },
+  '4': {
+    vehicle_type_id: '4',
+    form_factor: 'bicycle',
+    propulsion_type: 'human',
+  },
+  // Voi
+  voi_scooter: {
+    vehicle_type_id: 'voi_scooter',
+    form_factor: 'scooter',
+    propulsion_type: 'electric',
+    name: 'scooter',
+    rider_capacity: 1,
+    max_range_meters: 80000,
+  },
+  voi_bike: {
+    vehicle_type_id: 'voi_bike',
+    form_factor: 'bicycle',
+    propulsion_type: 'electric_assist',
+    name: 'bicycle',
+    rider_capacity: 1,
+    max_range_meters: 80000,
+  },
+};
+
+// ── GBFS types ──────────────────────────────────────────────────────
+
+export interface GbfsResponse {
+  last_updated: number;
+  ttl: number;
+  version: string;
+  data: { bikes: GbfsBike[] };
+}
+
+export interface GbfsBike {
+  bike_id: string;
+  lat: number;
+  lon: number;
+  is_reserved: boolean;
+  is_disabled: boolean;
+  current_range_meters?: number;
+  vehicle_type_id?: string;
+  last_reported?: number;
+}
+
+// ── App bike (enriched) ─────────────────────────────────────────────
+
+export interface Bike {
+  bike_id: string;
+  lat: number;
+  lon: number;
+  is_reserved?: boolean;
+  is_disabled?: boolean;
+  vehicle_type_id?: string;
+  form_factor?: FormFactor;
+  current_range_meters?: number;
+  max_range_meters?: number;
+  battery_percent?: number;
+  distance?: number;
+  provider: Provider;
+}
+
+// ── Profile / Filters ───────────────────────────────────────────────
+
+/** -1 = not set / unlimited */
+export const UNSET = -1;
+
+export const FILTER_BOUNDS = {
+  limit: { min: 5, max: 100, step: 5, default: 20 },
+  maxDistance: { min: UNSET, max: 10_000, step: 100, default: UNSET },
+  minBattery: { min: UNSET, max: 100, step: 5, default: UNSET },
+  pollInterval: { min: 15, max: 300, step: 15, default: 60 },
+} as const;
+
+export interface ProfileData {
+  id: string;
+  name: string;
+  lat: number | null;
+  lng: number | null;
+  providers: Provider[];
+  limit: number;
+  maxDistance: number;
+  minBattery: number;
+  pollInterval: number;
+}
+
+export function createDefaultProfile(name: string): ProfileData {
+  return {
+    id: crypto.randomUUID(),
+    name,
+    lat: null,
+    lng: null,
+    providers: [...ALL_PROVIDERS],
+    limit: FILTER_BOUNDS.limit.default,
+    maxDistance: FILTER_BOUNDS.maxDistance.default,
+    minBattery: FILTER_BOUNDS.minBattery.default,
+    pollInterval: FILTER_BOUNDS.pollInterval.default,
+  };
+}

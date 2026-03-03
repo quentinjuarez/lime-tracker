@@ -1,6 +1,6 @@
 {
-  "name": "Ride Tracker",
-  "short_name": "Ride Tracker",
+  "name": "Bike Tracker",
+  "short_name": "Bike Tracker",
   "description": "Find Lime & Voi e-scooters and e-bikes near you in real time",
   "start_url": "/",
   "display": "standalone",

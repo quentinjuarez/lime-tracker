@@ -1,27 +1,29 @@
-import { ref, onMounted, onUnmounted, watch } from 'vue';
+import { ref } from 'vue';
 import { useProfileStore } from '../stores/profile';
 
+/**
+ * Non-intrusive geolocation helper.
+ * Does NOT auto-start – call `locate()` explicitly when user opts in.
+ */
 export function useGeolocation() {
   const store = useProfileStore();
   const error = ref<string | null>(null);
   const loading = ref(false);
-  let watchId: number | null = null;
 
-  function start() {
+  function locate() {
     if (!navigator.geolocation) {
       error.value = 'Geolocation is not supported by your browser';
       return;
     }
 
     loading.value = true;
+    error.value = null;
 
-    watchId = navigator.geolocation.watchPosition(
+    navigator.geolocation.getCurrentPosition(
       (pos) => {
         loading.value = false;
         error.value = null;
-        if (store.useGeolocation) {
-          store.setPosition(pos.coords.latitude, pos.coords.longitude);
-        }
+        store.setPosition(pos.coords.latitude, pos.coords.longitude);
       },
       (err) => {
         loading.value = false;
@@ -43,34 +45,10 @@ export function useGeolocation() {
       {
         enableHighAccuracy: true,
         timeout: 10000,
-        maximumAge: 30000,
+        maximumAge: 60000,
       },
     );
   }
 
-  function stop() {
-    if (watchId !== null) {
-      navigator.geolocation.clearWatch(watchId);
-      watchId = null;
-    }
-  }
-
-  // Auto-start/stop when useGeolocation changes
-  watch(
-    () => store.useGeolocation,
-    (enabled) => {
-      if (enabled) start();
-      else stop();
-    },
-  );
-
-  onMounted(() => {
-    if (store.useGeolocation) start();
-  });
-
-  onUnmounted(() => {
-    stop();
-  });
-
-  return { error, loading };
+  return { error, loading, locate };
 }

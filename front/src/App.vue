@@ -4,7 +4,6 @@
 
     <template v-else>
       <BikeMap
-        v-show="activeTab === 'map'"
         :bikes="bikes"
         :user-lat="store.activeProfile!.lat!"
         :user-lng="store.activeProfile!.lng!"
@@ -21,11 +20,11 @@
     <!-- HUD -->
     <template v-if="store.hasActiveProfile && store.hasPosition">
       <!-- Tabs – top left -->
-      <div class="fixed top-4 left-16 z-1000 flex gap-2">
+      <div class="fixed top-4 left-14 z-1000 flex gap-2">
         <button
           v-for="tab in tabs"
           :key="tab.key"
-          class="px-4 py-2 rounded-md text-xs font-mono uppercase tracking-wider shadow-lg backdrop-blur transition-colors border"
+          class="px-3 py-2 rounded-md text-xs font-mono tracking-wider shadow-lg backdrop-blur transition-colors border"
           :class="
             activeTab === tab.key
               ? 'bg-led/20 text-led border-led/50'
@@ -39,43 +38,38 @@
 
       <!-- Refresh badge – top right -->
       <div
-        class="fixed top-4 right-4 z-1000 flex items-center gap-2 bg-black/80 backdrop-blur text-led text-xs font-mono px-3 py-2 rounded-lg shadow-lg border border-led/20"
+        class="w-16 fixed top-4 right-4 z-1000 flex justify-center items-center gap-2 bg-black/80 backdrop-blur text-led text-xs font-mono px-3 py-2 rounded-lg shadow-lg border border-led/20"
       >
-        <svg
-          v-if="loading"
-          class="animate-spin h-4 w-4 text-led"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <circle
-            class="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            stroke-width="4"
-          />
-          <path
-            class="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-          />
-        </svg>
-        <span v-if="loading">...</span>
-        <span v-else>↻ {{ nextRefresh }}s</span>
+        <SpinnerIcon v-if="loading" size="sm" />
+        <span v-if="!loading">↻ {{ nextRefresh }}s</span>
       </div>
 
       <!-- Error toast -->
       <div
         v-if="error"
-        class="fixed top-16 right-8 z-1000 bg-red-400/80 backdrop-blur text-red-400 text-xs font-mono px-3 py-2 rounded-lg shadow-lg border border-red-400/60 max-w-xs"
+        class="fixed top-16 right-4 z-1000 bg-red-900 backdrop-blur text-red-400 text-xs font-mono px-3 py-2 rounded-lg shadow-lg border border-red-800 max-w-xs"
       >
         {{ error }}
       </div>
     </template>
 
-    <!-- Settings button (always visible once a profile exists) -->
+    <!-- Backdrop loader -->
+    <Transition name="fade">
+      <div
+        v-if="loading"
+        class="fixed inset-0 z-900 bg-black/50 backdrop-blur-sm flex items-center justify-center pointer-events-none"
+      >
+        <div class="flex flex-col items-center gap-3">
+          <SpinnerIcon size="lg" />
+          <span
+            class="text-led text-xs font-mono uppercase tracking-widest glow-sm"
+            >Loading…</span
+          >
+        </div>
+      </div>
+    </Transition>
+
+    <!-- Settings -->
     <button
       v-if="store.hasActiveProfile"
       class="fixed top-4 right-22 z-1000 bg-black/80 backdrop-blur text-led text-xs font-mono px-3 py-2 rounded-lg shadow-lg border border-led/20 hover:bg-led/10 transition-colors"
@@ -95,6 +89,7 @@ import { useBikes } from './composables/useBikes';
 import OnboardingScreen from './components/OnboardingScreen.vue';
 import BikeMap from './components/BikeMap.vue';
 import BikeList from './components/BikeList.vue';
+import SpinnerIcon from './components/SpinnerIcon.vue';
 import SettingsPanel from './components/SettingsPanel.vue';
 
 const store = useProfileStore();
@@ -111,3 +106,14 @@ const { bikes, loading, error, nextRefresh } = useBikes({
   proxyBase: import.meta.env.VITE_BACK_URL || 'http://localhost:13001',
 });
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

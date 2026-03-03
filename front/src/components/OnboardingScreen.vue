@@ -35,30 +35,10 @@
     <!-- ── Step 2a: GPS loading ─────────────────────────────────────── -->
     <template v-else-if="chosenMode === 'geolocation'">
       <div class="flex flex-col items-center gap-4 w-full max-w-xs">
-        <svg
-          v-if="geoLoading"
-          class="animate-spin h-6 w-6 text-led"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <circle
-            class="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            stroke-width="4"
-          />
-          <path
-            class="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-          />
-        </svg>
-        <span v-if="geoLoading" class="text-sm tracking-wider uppercase"
-          >Locating…</span
-        >
+        <SpinnerIcon v-if="geoLoading" />
+        <span v-if="geoLoading" class="text-sm tracking-wider uppercase">
+          Locating...
+        </span>
 
         <div v-if="geoError" class="text-red-400 text-xs text-center">
           {{ geoError }}
@@ -119,6 +99,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import SpinnerIcon from './SpinnerIcon.vue';
 import BaseButton from './BaseButton.vue';
 import BaseInput from './BaseInput.vue';
 import { useProfileStore } from '../stores/profile';

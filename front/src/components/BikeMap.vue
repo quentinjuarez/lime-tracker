@@ -13,7 +13,7 @@
         layer-type="base"
       />
 
-      <!-- User position (blue) -->
+      <!-- User -->
       <l-circle-marker
         :lat-lng="[userLat, userLng]"
         :radius="10"

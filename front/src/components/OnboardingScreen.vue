@@ -16,7 +16,7 @@
           class="w-full flex items-center justify-center gap-2"
           @click="chooseGeo"
         >
-          📍 Use my GPS location
+          Use my GPS location
         </BaseButton>
 
         <div class="text-led text-[11px] text-center uppercase tracking-widest">
@@ -27,7 +27,7 @@
           class="w-full flex items-center justify-center gap-2"
           @click="chosenMode = 'custom'"
         >
-          🗺️ Enter a location
+          Enter a location
         </BaseButton>
       </div>
     </template>
@@ -72,7 +72,6 @@
     <template v-else-if="chosenMode === 'custom'">
       <div class="w-full max-w-sm space-y-4">
         <BaseInput
-          ref="locInput"
           v-model="locationRaw"
           type="text"
           placeholder="Paste coordinates or Google Maps link…"
@@ -91,13 +90,13 @@
           Confirm location
         </BaseButton>
 
-        <details class="text-led/40 text-[11px]">
+        <details class="text-led/80 text-[11px]">
           <summary
-            class="cursor-pointer hover:text-led/60 transition-colors uppercase tracking-widest"
+            class="cursor-pointer hover:text-led transition-colors tracking-widest"
           >
             Supported formats
           </summary>
-          <ul class="mt-2 space-y-1 text-led/30 font-mono">
+          <ul class="mt-2 space-y-1 text-led/80 font-mono">
             <li v-for="f in LOCATION_FORMATS" :key="f">{{ f }}</li>
           </ul>
         </details>
@@ -132,7 +131,6 @@ const { error: geoError, loading: geoLoading, locate } = useGeolocation();
 
 const chosenMode = ref<ProfileMode | null>(null);
 const locationRaw = ref('');
-const locInput = ref<HTMLInputElement | null>(null);
 
 const parsed = computed(() => parseLocation(locationRaw.value));
 

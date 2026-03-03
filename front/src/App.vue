@@ -78,19 +78,11 @@
     <!-- Settings button (always visible once a profile exists) -->
     <button
       v-if="store.hasActiveProfile"
-      class="fixed top-4 right-44 z-1000 bg-black/80 backdrop-blur text-led text-xs font-mono px-3 py-2 rounded-lg shadow-lg border border-led/20 hover:bg-led/10 transition-colors"
+      class="fixed top-4 right-24 z-1000 bg-black/80 backdrop-blur text-led text-xs font-mono px-3 py-2 rounded-lg shadow-lg border border-led/20 hover:bg-led/10 transition-colors"
       @click="showSettings = true"
     >
-      ⚙ Settings
+      Settings
     </button>
-
-    <!-- Active profile badge – top left corner -->
-    <div
-      v-if="store.activeProfile"
-      class="fixed top-4 left-4 z-1000 bg-black/80 backdrop-blur text-led text-xs font-mono px-3 py-2 rounded-lg shadow-lg border border-led/20 truncate max-w-[140px]"
-    >
-      {{ store.activeProfile.mode === 'geolocation' ? '📍 GPS' : '🗺️ Custom' }}
-    </div>
 
     <SettingsPanel :open="showSettings" @close="showSettings = false" />
   </div>

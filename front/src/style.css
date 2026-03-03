@@ -3,7 +3,7 @@
 @theme {
   --color-lime-brand: #00de00;
   --color-voi-brand: #f44336;
-  --color-led: #f97316;
+  --color-led: #ffa500;
 }
 
 @utility glow-sm {

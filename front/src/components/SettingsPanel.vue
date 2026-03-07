@@ -138,28 +138,23 @@
             </h3>
 
             <BaseSlider
-              label="Max vehicles"
-              :display-value="String(draft.limit)"
-              :model-value="draft.limit"
-              :min="FILTER_BOUNDS.limit.min"
-              :max="FILTER_BOUNDS.limit.max"
-              :step="FILTER_BOUNDS.limit.step"
-              @update:model-value="draft.limit = $event"
-            />
-
-            <BaseSlider
               label="Max distance"
               :display-value="
                 draft.maxDistance === UNSET
-                  ? 'Unlimited'
-                  : `${draft.maxDistance}m`
+                  ? 'No limit'
+                  : walkMinutesLabel(metersToWalkMinutes(draft.maxDistance))
               "
-              :model-value="draft.maxDistance === UNSET ? 0 : draft.maxDistance"
+              :model-value="
+                draft.maxDistance === UNSET
+                  ? 0
+                  : metersToWalkMinutes(draft.maxDistance)
+              "
               :min="0"
-              :max="FILTER_BOUNDS.maxDistance.max"
-              :step="FILTER_BOUNDS.maxDistance.step"
+              :max="20"
+              :step="1"
               @update:model-value="
-                draft.maxDistance = $event === 0 ? UNSET : $event
+                draft.maxDistance =
+                  $event === 0 ? UNSET : walkMinutesToMeters($event)
               "
             />
 
@@ -213,6 +208,11 @@ import { useTheme } from '../composables/useTheme';
 import { useProfileStore } from '../stores/profile';
 import { useGeolocation } from '../composables/useGeolocation';
 import { parseLocation } from '../utils/parseLocation';
+import {
+  metersToWalkMinutes,
+  walkMinutesToMeters,
+  walkMinutesLabel,
+} from '../utils/walking';
 import { type Provider, ALL_PROVIDERS, FILTER_BOUNDS, UNSET } from '../types';
 
 const props = defineProps<{ open: boolean }>();

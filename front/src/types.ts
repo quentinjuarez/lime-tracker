@@ -128,7 +128,7 @@ export interface Bike {
 export const UNSET = -1;
 
 export const FILTER_BOUNDS = {
-  limit: { min: 5, max: 100, step: 5, default: 20 },
+  limit: { min: 5, max: 100, step: 5, default: 100 },
   maxDistance: { min: UNSET, max: 10_000, step: 100, default: UNSET },
   minBattery: { min: UNSET, max: 100, step: 5, default: UNSET },
   pollInterval: { min: 15, max: 300, step: 15, default: 60 },

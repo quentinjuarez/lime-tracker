@@ -50,10 +50,10 @@
           Settings
         </BaseButton>
         <div
-          class="w-16 flex justify-center items-center backdrop-blur-sm bg-black/10 text-led text-xs font-mono px-3 py-1.5 rounded-lg border border-led/80"
+          class="min-w-16 flex justify-center items-center backdrop-blur-sm bg-black/10 text-led text-xs font-mono px-3 py-1.5 rounded-lg border border-led/80"
         >
           <SpinnerIcon v-if="loading" size="sm" />
-          <span v-if="!loading">↻ {{ nextRefresh }}s</span>
+          <span v-if="!loading" class="flex-none">↻ {{ nextRefresh }}s</span>
         </div>
       </div>
 

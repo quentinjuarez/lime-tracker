@@ -27,15 +27,11 @@
       </l-circle-marker>
 
       <!-- Bikes -->
-      <l-circle-marker
+      <l-marker
         v-for="bike in bikes"
         :key="`${bike.provider}-${bike.bike_id}`"
         :lat-lng="[bike.lat, bike.lon]"
-        :radius="7"
-        :color="markerColor(bike.provider)"
-        :fill="true"
-        :fill-color="markerColor(bike.provider)"
-        :fill-opacity="0.333"
+        :icon="bikeIcon(bike)"
       >
         <l-tooltip
           :options="{ permanent: false, sticky: true, interactive: false }"
@@ -50,7 +46,7 @@
             </template>
           </div>
         </l-tooltip>
-      </l-circle-marker>
+      </l-marker>
     </l-map>
 
     <!-- Legend overlay -->
@@ -84,10 +80,12 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted, nextTick } from 'vue';
+import L from 'leaflet';
 import {
   LMap,
   LTileLayer,
   LCircleMarker,
+  LMarker,
   LTooltip,
 } from '@vue-leaflet/vue-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -138,6 +136,49 @@ const PROVIDER_HEX: Record<Provider, string> = {
 
 function markerColor(provider: Provider): string {
   return PROVIDER_HEX[provider];
+}
+
+function bikeIcon(bike: Bike): L.Icon {
+  const color = markerColor(bike.provider);
+  const isDark = theme.value === 'dark';
+  const SIZE = 26;
+  const CX = SIZE / 2;
+  const R = 10;
+  const SW = 3; // stroke-width of the progress arc
+  const C = 2 * Math.PI * R; // circumference ≈ 62.83
+
+  const bgFill = isDark ? 'rgba(0,0,0,0.55)' : 'rgba(255,255,255,0.75)';
+  const trackStroke = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.14)';
+
+  let arcSvg = '';
+  if (bike.battery_percent != null) {
+    const dash = (bike.battery_percent / 100) * C;
+    arcSvg = `
+      <circle cx="${CX}" cy="${CX}" r="${R}" fill="none"
+        stroke="${trackStroke}" stroke-width="${SW}"/>
+      <circle cx="${CX}" cy="${CX}" r="${R}" fill="none"
+        stroke="${color}" stroke-width="${SW}"
+        stroke-dasharray="${dash} ${C}"
+        stroke-linecap="round"
+        transform="rotate(-90 ${CX} ${CX})"/>`;
+  } else {
+    // No battery info: full colored ring
+    arcSvg = `<circle cx="${CX}" cy="${CX}" r="${R}" fill="none"
+      stroke="${color}" stroke-width="${SW}" opacity="0.5"/>`;
+  }
+
+  const svg = `<svg width="${SIZE}" height="${SIZE}" viewBox="0 0 ${SIZE} ${SIZE}" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="${CX}" cy="${CX}" r="${R + 1}" fill="${bgFill}"/>
+    ${arcSvg}
+    <circle cx="${CX}" cy="${CX}" r="5.5" fill="${color}"/>
+  </svg>`;
+
+  return L.divIcon({
+    html: svg,
+    className: '',
+    iconSize: [SIZE, SIZE],
+    iconAnchor: [CX, CX],
+  }) as unknown as L.Icon;
 }
 
 function formatDistance(m?: number) {

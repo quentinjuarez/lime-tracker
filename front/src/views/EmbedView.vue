@@ -51,7 +51,8 @@ onMounted(() => {
   if (!ok) missingParams.value = true;
 });
 
-const { bikes, loading, error } = useBikes({
+// loading,
+const { bikes, error } = useBikes({
   proxyBase: import.meta.env.VITE_BACK_URL || 'http://localhost:13001',
 });
 </script>

@@ -5,14 +5,14 @@
 
     <!-- Map (show behind loading spinner if geo is in progress on first load) -->
     <template v-if="store.hasPosition || geoLoading">
-      <Transition name="fade">
+      <!-- <Transition name="fade">
         <div
           v-if="loading"
           class="fixed inset-0 z-900 bg-black/0 backdrop-blur-sm flex items-center justify-center pointer-events-none"
         >
           <SpinnerIcon size="lg" />
         </div>
-      </Transition>
+      </Transition> -->
 
       <BikeMap
         v-if="store.hasPosition"

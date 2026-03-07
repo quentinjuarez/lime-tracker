@@ -3,7 +3,7 @@
     <!-- Missing params error -->
     <div
       v-if="missingParams"
-      class="flex items-center justify-center h-full text-led/60 font-mono text-sm"
+      class="flex items-center justify-center h-full text-led/80 font-mono text-sm"
     >
       Missing required query params:
       <code class="ml-2 text-led">?lat=…&lng=…</code>
@@ -11,14 +11,14 @@
 
     <template v-else>
       <!-- Loading overlay -->
-      <Transition name="fade">
+      <!-- <Transition name="fade">
         <div
           v-if="loading"
           class="fixed inset-0 z-900 bg-black/0 backdrop-blur-sm flex items-center justify-center pointer-events-none"
         >
           <SpinnerIcon size="lg" />
         </div>
-      </Transition>
+      </Transition> -->
 
       <BikeMap :bikes="bikes" :user-lat="store.lat!" :user-lng="store.lng!" />
 
@@ -39,7 +39,7 @@ import { useProfileStore } from '../stores/profile';
 import { useBikes } from '../composables/useBikes';
 import { applyQueryParams } from '../composables/useQueryParams';
 import BikeMap from '../components/BikeMap.vue';
-import SpinnerIcon from '../components/SpinnerIcon.vue';
+// import SpinnerIcon from '../components/SpinnerIcon.vue';
 
 const store = useProfileStore();
 const missingParams = ref(false);

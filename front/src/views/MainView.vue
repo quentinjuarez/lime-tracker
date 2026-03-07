@@ -27,7 +27,7 @@
         class="flex items-center justify-center h-full gap-3 text-led font-mono text-sm"
       >
         <SpinnerIcon size="lg" />
-        <span>Getting your location…</span>
+        <span>{{ t('main.gettingLocation') }}</span>
       </div>
 
       <!-- Geo error on first load (no position yet) -->
@@ -44,16 +44,18 @@
     <template v-if="store.hasPosition">
       <div class="top-4 right-4 fixed z-1000 flex items-center gap-2 flex-none">
         <BaseButton @click="showList = true" variant="ghost" size="sm">
-          List
+          {{ t('main.list') }}
         </BaseButton>
         <BaseButton @click="showSettings = true" variant="ghost" size="sm">
-          Settings
+          {{ t('main.settings') }}
         </BaseButton>
         <div
           class="min-w-16 flex justify-center items-center backdrop-blur-sm bg-black/10 text-led text-xs font-mono px-3 py-1.5 rounded-lg border border-led/80"
         >
           <SpinnerIcon v-if="loading" size="sm" />
-          <span v-if="!loading" class="flex-none">↻ {{ nextRefresh }}s</span>
+          <span v-if="!loading" class="flex-none">{{
+            t('main.nextRefresh', { n: nextRefresh })
+          }}</span>
         </div>
       </div>
 
@@ -75,6 +77,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useProfileStore } from '../stores/profile';
 import { useBikes } from '../composables/useBikes';
 import { useGeolocation } from '../composables/useGeolocation';
@@ -88,6 +91,7 @@ import SettingsPanel from '../components/SettingsPanel.vue';
 import BaseButton from '../components/BaseButton.vue';
 
 const store = useProfileStore();
+const { t } = useI18n();
 const { error: geoError, loading: geoLoading, locate } = useGeolocation();
 
 const showList = ref(false);

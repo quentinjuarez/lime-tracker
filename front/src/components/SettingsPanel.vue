@@ -16,7 +16,7 @@
           <!-- Header -->
           <div class="flex items-center justify-between">
             <h2 class="text-lg font-bold uppercase tracking-widest glow-sm">
-              Settings
+              {{ t('settings.title') }}
             </h2>
             <div class="flex items-center gap-2">
               <BaseButton
@@ -25,8 +25,8 @@
                 class="px-2!"
                 :title="
                   theme === 'dark'
-                    ? 'Switch to light mode'
-                    : 'Switch to dark mode'
+                    ? t('settings.lightMode')
+                    : t('settings.darkMode')
                 "
                 @click="toggleTheme"
               >
@@ -41,7 +41,7 @@
           <!-- ── Location ──────────────────────────────────────────── -->
           <section class="space-y-3">
             <h3 class="text-xs uppercase tracking-widest text-led/80">
-              Location
+              {{ t('settings.location') }}
             </h3>
 
             <!-- Current coords -->
@@ -51,7 +51,9 @@
                 {{ store.locationMode === 'geo' ? '(GPS)' : '(manual)' }}
               </span>
             </div>
-            <div v-else class="text-xs text-led/40">No position set</div>
+            <div v-else class="text-xs text-led/40">
+              {{ t('settings.noPosition') }}
+            </div>
 
             <!-- GPS refresh button -->
             <BaseButton
@@ -63,10 +65,10 @@
               <SpinnerIcon v-if="geoLoading" size="sm" class="mr-1" />
               {{
                 geoLoading
-                  ? 'Locating…'
+                  ? t('settings.locating')
                   : store.hasPosition
-                    ? ' Refresh GPS'
-                    : ' Get GPS location'
+                    ? t('settings.refreshGps')
+                    : t('settings.getGps')
               }}
             </BaseButton>
             <div v-if="geoError" class="text-red-400 text-xs">
@@ -78,14 +80,18 @@
               class="text-[11px] text-led/50 hover:text-led/80 transition-colors uppercase tracking-widest underline-offset-2 hover:underline"
               @click="showManualInput = !showManualInput"
             >
-              {{ showManualInput ? 'Cancel' : 'Enter location manually' }}
+              {{
+                showManualInput
+                  ? t('settings.cancel')
+                  : t('settings.enterManually')
+              }}
             </button>
 
             <template v-if="showManualInput">
               <BaseInput
                 v-model="locationRaw"
                 type="text"
-                placeholder="Coordinates or Google Maps link…"
+                :placeholder="t('settings.placeholder')"
                 class="w-full"
                 @keydown.enter="submitManual"
               />
@@ -96,7 +102,7 @@
                 v-else-if="locationRaw && !parsed"
                 class="text-xs text-red-400"
               >
-                Could not parse location
+                {{ t('settings.cannotParse') }}
               </div>
               <BaseButton
                 size="sm"
@@ -104,7 +110,7 @@
                 :disabled="!parsed"
                 @click="submitManual"
               >
-                Confirm location
+                {{ t('settings.confirmLocation') }}
               </BaseButton>
             </template>
           </section>
@@ -112,7 +118,7 @@
           <!-- ── Providers ─────────────────────────────────────────── -->
           <section class="space-y-2">
             <h3 class="text-xs uppercase tracking-widest text-led/80">
-              Providers
+              {{ t('settings.providers') }}
             </h3>
             <label
               v-for="p in allProviders"
@@ -134,15 +140,17 @@
           <!-- ── Filters ───────────────────────────────────────────── -->
           <section class="space-y-4">
             <h3 class="text-xs uppercase tracking-widest text-led/80">
-              Filters
+              {{ t('settings.filters') }}
             </h3>
 
             <BaseSlider
-              label="Max distance"
+              :label="t('settings.maxDistance')"
               :display-value="
                 draft.maxDistance === UNSET
-                  ? 'No limit'
-                  : walkMinutesLabel(metersToWalkMinutes(draft.maxDistance))
+                  ? t('settings.noLimit')
+                  : t('settings.walkMin', {
+                      n: metersToWalkMinutes(draft.maxDistance),
+                    })
               "
               :model-value="
                 draft.maxDistance === UNSET
@@ -159,9 +167,11 @@
             />
 
             <BaseSlider
-              label="Min battery"
+              :label="t('settings.minBattery')"
               :display-value="
-                draft.minBattery === UNSET ? 'Any' : `${draft.minBattery}%`
+                draft.minBattery === UNSET
+                  ? t('settings.anyBattery')
+                  : `${draft.minBattery}%`
               "
               :model-value="draft.minBattery === UNSET ? 0 : draft.minBattery"
               :min="0"
@@ -173,6 +183,25 @@
             />
           </section>
 
+          <!-- Language -->
+          <section class="space-y-2">
+            <h3 class="text-xs uppercase tracking-widest text-led/80">
+              {{ t('settings.language') }}
+            </h3>
+            <div class="flex gap-2">
+              <BaseButton
+                v-for="loc in SUPPORTED_LOCALES"
+                :key="loc"
+                :variant="locale === loc ? 'default' : 'ghost'"
+                size="sm"
+                class="uppercase"
+                @click="switchLocale(loc)"
+              >
+                {{ loc }}
+              </BaseButton>
+            </div>
+          </section>
+
           <!-- Reset -->
           <BaseButton
             variant="danger-ghost"
@@ -180,7 +209,7 @@
             class="w-full"
             @click="resetDraft"
           >
-            Reset to defaults
+            {{ t('settings.resetDefaults') }}
           </BaseButton>
 
           <!-- Copy link -->
@@ -190,7 +219,11 @@
             class="w-full"
             @click="copyLink"
           >
-            {{ linkCopied ? '✓ Link copied!' : '🔗 Copy settings as link' }}
+            {{
+              linkCopied
+                ? t('settings.linkCopied')
+                : '🔗 ' + t('settings.copyLink')
+            }}
           </BaseButton>
         </div>
       </div>
@@ -200,6 +233,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import BaseButton from './BaseButton.vue';
 import BaseInput from './BaseInput.vue';
 import BaseSlider from './BaseSlider.vue';
@@ -208,12 +242,10 @@ import { useTheme } from '../composables/useTheme';
 import { useProfileStore } from '../stores/profile';
 import { useGeolocation } from '../composables/useGeolocation';
 import { parseLocation } from '../utils/parseLocation';
-import {
-  metersToWalkMinutes,
-  walkMinutesToMeters,
-  walkMinutesLabel,
-} from '../utils/walking';
+import { metersToWalkMinutes, walkMinutesToMeters } from '../utils/walking';
 import { type Provider, ALL_PROVIDERS, FILTER_BOUNDS, UNSET } from '../types';
+
+import { setLocale, SUPPORTED_LOCALES, type Locale } from '../i18n';
 
 const props = defineProps<{ open: boolean }>();
 const emit = defineEmits<{ close: [] }>();
@@ -221,6 +253,11 @@ const emit = defineEmits<{ close: [] }>();
 const store = useProfileStore();
 const { error: geoError, loading: geoLoading, locate } = useGeolocation();
 const { theme, toggleTheme } = useTheme();
+const { t, locale } = useI18n();
+
+function switchLocale(loc: Locale) {
+  setLocale(loc);
+}
 
 // ── Manual location input ────────────────────────────────────────────
 const showManualInput = ref(false);

@@ -16,7 +16,7 @@
           <!-- Header -->
           <div class="flex items-center justify-between">
             <h2 class="text-lg font-bold uppercase tracking-widest glow-sm">
-              Vehicles
+              {{ t('bikeList.title') }}
               <span class="text-led/60 text-sm font-normal ml-2">
                 {{ bikes.length }}
               </span>
@@ -35,10 +35,10 @@
           <div
             class="grid grid-cols-[80px_1fr_60px_100px] gap-2 px-4 py-2 border-b border-led/30 text-led/80 text-[11px] uppercase tracking-widest"
           >
-            <span class="glow-sm">Provider</span>
-            <span class="glow-sm">Vehicle</span>
-            <span class="text-right glow-sm">Batt.</span>
-            <span class="text-right glow-sm">Dist.</span>
+            <span class="glow-sm">{{ t('bikeList.provider') }}</span>
+            <span class="glow-sm">{{ t('bikeList.vehicle') }}</span>
+            <span class="text-right glow-sm">{{ t('bikeList.battery') }}</span>
+            <span class="text-right glow-sm">{{ t('bikeList.distance') }}</span>
           </div>
 
           <!-- Rows -->
@@ -86,7 +86,7 @@
             v-if="!bikes.length"
             class="text-center text-led/50 text-sm py-8 tracking-widest uppercase"
           >
-            No vehicles nearby
+            {{ t('bikeList.noVehicles') }}
           </div>
         </div>
       </div>
@@ -95,8 +95,11 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import type { Bike } from '../composables/useBikes';
 import BaseButton from './BaseButton.vue';
+
+const { t } = useI18n();
 
 defineProps<{
   open: boolean;

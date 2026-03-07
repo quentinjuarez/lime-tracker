@@ -23,7 +23,9 @@
         fill-color="#ad46ff"
         :fill-opacity="0.333"
       >
-        <l-tooltip :options="{ permanent: false }">Me</l-tooltip>
+        <l-tooltip :options="{ permanent: false }">{{
+          t('bikeMap.me')
+        }}</l-tooltip>
       </l-circle-marker>
 
       <!-- Bikes -->
@@ -39,8 +41,7 @@
           <div class="text-xs">
             <strong class="uppercase">{{ bike.provider }}</strong>
             <br />
-            {{ bike.bike_id }}<br />
-            {{ formatDistance(bike.distance) }}
+            {{ formatDistance(bike.distance) }}<br />
             <template v-if="bike.battery_percent != null">
               {{ bike.battery_percent }}%
             </template>
@@ -60,7 +61,7 @@
     >
       <div class="flex items-center gap-2">
         <span class="w-3 h-3 rounded-full bg-purple-500 inline-block"></span>
-        Me
+        {{ t('bikeMap.me') }}
       </div>
       <div class="flex items-center gap-2">
         <span class="w-3 h-3 rounded-full inline-block bg-lime-brand"></span>
@@ -80,6 +81,7 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted, nextTick } from 'vue';
+import { useI18n } from 'vue-i18n';
 import L from 'leaflet';
 import {
   LMap,
@@ -99,6 +101,7 @@ const props = defineProps<{
 }>();
 
 const { theme } = useTheme();
+const { t } = useI18n();
 
 const TILE_DARK =
   'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';

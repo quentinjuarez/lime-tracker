@@ -1,8 +1,10 @@
 <template>
   <div class="relative w-dvw h-dvh overflow-hidden bg-black">
-    <OnboardingScreen v-if="!store.hasActiveProfile || !store.hasPosition" />
+    <!-- Onboarding: no position yet (and geo is loading) -->
+    <OnboardingScreen v-if="!store.hasPosition && !geoLoading" />
 
-    <template v-else>
+    <!-- Map (show behind loading spinner if geo is in progress on first load) -->
+    <template v-if="store.hasPosition || geoLoading">
       <Transition name="fade">
         <div
           v-if="loading"
@@ -13,24 +15,40 @@
       </Transition>
 
       <BikeMap
+        v-if="store.hasPosition"
         :bikes="bikes"
-        :user-lat="store.activeProfile!.lat!"
-        :user-lng="store.activeProfile!.lng!"
+        :user-lat="store.lat!"
+        :user-lng="store.lng!"
       />
+
+      <!-- Initial geo loading screen -->
+      <div
+        v-if="geoLoading && !store.hasPosition"
+        class="flex items-center justify-center h-full gap-3 text-led font-mono text-sm"
+      >
+        <SpinnerIcon size="lg" />
+        <span>Getting your location…</span>
+      </div>
+
+      <!-- Geo error on first load (no position yet) -->
+      <div
+        v-if="geoError && !store.hasPosition"
+        class="flex flex-col items-center justify-center h-full gap-4 text-led font-mono px-6"
+      >
+        <p class="text-red-400 text-sm text-center">{{ geoError }}</p>
+        <OnboardingScreen />
+      </div>
     </template>
 
     <!-- HUD -->
-    <template v-if="store.hasActiveProfile && store.hasPosition">
+    <template v-if="store.hasPosition">
       <div class="top-4 right-4 fixed z-1000 flex items-center gap-2 flex-none">
         <BaseButton @click="showList = true" variant="ghost" size="sm">
           List
         </BaseButton>
-
         <BaseButton @click="showSettings = true" variant="ghost" size="sm">
           Settings
         </BaseButton>
-
-        <!-- Refresh badge – top right -->
         <div
           class="w-16 flex justify-center items-center backdrop-blur-sm bg-black/10 text-led text-xs font-mono px-3 py-1.5 rounded-lg border border-led/80"
         >
@@ -59,6 +77,7 @@
 import { ref, onMounted, watch } from 'vue';
 import { useProfileStore } from '../stores/profile';
 import { useBikes } from '../composables/useBikes';
+import { useGeolocation } from '../composables/useGeolocation';
 import { ALL_PROVIDERS, FILTER_BOUNDS, UNSET } from '../types';
 import { applyQueryParams } from '../composables/useQueryParams';
 import OnboardingScreen from '../components/OnboardingScreen.vue';
@@ -69,36 +88,43 @@ import SettingsPanel from '../components/SettingsPanel.vue';
 import BaseButton from '../components/BaseButton.vue';
 
 const store = useProfileStore();
+const { error: geoError, loading: geoLoading, locate } = useGeolocation();
 
 const showList = ref(false);
 const showSettings = ref(false);
 
 onMounted(() => {
-  applyQueryParams(window.location.search);
+  // Query params take priority (shared link / embed-like usage on main view)
+  const hadQueryParams = applyQueryParams(window.location.search);
+
+  // Auto-refresh geo only if the user has already set a position in geo mode
+  // (i.e. they did onboarding before). Don't trigger on first visit.
+  if (!hadQueryParams && store.locationMode === 'geo' && store.hasPosition) {
+    locate();
+  }
 });
 
-// Keep URL in sync with the active profile (omits params that are at default)
+// Keep URL in sync with the store
 watch(
-  () => {
-    const p = store.activeProfile;
-    if (!p || p.lat == null || p.lng == null) return null;
-    return {
-      lat: p.lat,
-      lng: p.lng,
-      providers: p.providers.join(','),
-      limit: p.limit,
-      maxDistance: p.maxDistance,
-      minBattery: p.minBattery,
-    };
-  },
+  () =>
+    store.hasPosition
+      ? {
+          lat: store.lat,
+          lng: store.lng,
+          providers: store.providers.join(','),
+          limit: store.limit,
+          maxDistance: store.maxDistance,
+          minBattery: store.minBattery,
+        }
+      : null,
   (state) => {
     if (!state) {
       window.history.replaceState({}, '', window.location.pathname);
       return;
     }
     const params = new URLSearchParams();
-    params.set('lat', state.lat.toString());
-    params.set('lng', state.lng.toString());
+    params.set('lat', state.lat!.toString());
+    params.set('lng', state.lng!.toString());
     if (state.providers !== ALL_PROVIDERS.join(','))
       params.set('providers', state.providers);
     if (state.limit !== FILTER_BOUNDS.limit.default)

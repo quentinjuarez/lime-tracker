@@ -64,9 +64,9 @@ const { error: geoError, loading: geoLoading, locate } = useGeolocation();
 const locationRaw = ref('');
 const parsed = computed(() => parseLocation(locationRaw.value));
 
-// Emit done when GPS succeeds — only needed in settings context (onboarding auto-hides via store)
+// Close picker when GPS succeeds
 watch(
-  () => [store.activeProfile?.lat, store.activeProfile?.lng] as const,
+  () => [store.lat, store.lng] as const,
   ([lat, lng], [oldLat, oldLng]) => {
     if (
       !props.isOnboarding &&
@@ -80,14 +80,12 @@ watch(
 );
 
 function chooseGeo() {
-  if (props.isOnboarding) store.ensureProfile('geolocation');
   locate();
 }
 
 function submitCustom() {
   if (!parsed.value) return;
-  if (props.isOnboarding) store.ensureProfile('custom');
-  store.setPosition(parsed.value.lat, parsed.value.lng);
+  store.setPosition(parsed.value.lat, parsed.value.lng, 'manual');
   emit('done');
 }
 

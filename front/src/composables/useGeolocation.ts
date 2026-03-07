@@ -2,8 +2,8 @@ import { ref } from 'vue';
 import { useProfileStore } from '../stores/profile';
 
 /**
- * Non-intrusive geolocation helper.
- * Does NOT auto-start – call `locate()` explicitly when user opts in.
+ * Geolocation helper. Call `locate()` to fetch GPS position.
+ * On success, stores position with locationMode = 'geo'.
  */
 export function useGeolocation() {
   const store = useProfileStore();
@@ -23,7 +23,7 @@ export function useGeolocation() {
       (pos) => {
         loading.value = false;
         error.value = null;
-        store.setPosition(pos.coords.latitude, pos.coords.longitude);
+        store.setPosition(pos.coords.latitude, pos.coords.longitude, 'geo');
       },
       (err) => {
         loading.value = false;

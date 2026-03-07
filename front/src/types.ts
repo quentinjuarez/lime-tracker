@@ -134,14 +134,12 @@ export const FILTER_BOUNDS = {
   pollInterval: { min: 15, max: 300, step: 15, default: 60 },
 } as const;
 
-export type ProfileMode = 'geolocation' | 'custom';
+export type LocationMode = 'geo' | 'manual';
 
-export interface ProfileData {
-  id: string;
-  name: string;
-  mode: ProfileMode;
+export interface ProfileState {
   lat: number | null;
   lng: number | null;
+  locationMode: LocationMode;
   providers: Provider[];
   limit: number;
   maxDistance: number;
@@ -149,16 +147,11 @@ export interface ProfileData {
   pollInterval: number;
 }
 
-export function createDefaultProfile(
-  name: string,
-  mode: ProfileMode = 'custom',
-): ProfileData {
+export function createDefaultState(): ProfileState {
   return {
-    id: crypto.randomUUID(),
-    name,
-    mode,
     lat: null,
     lng: null,
+    locationMode: 'geo',
     providers: [...ALL_PROVIDERS],
     limit: FILTER_BOUNDS.limit.default,
     maxDistance: FILTER_BOUNDS.maxDistance.default,

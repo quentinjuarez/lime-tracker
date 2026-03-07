@@ -20,11 +20,7 @@
         </div>
       </Transition>
 
-      <BikeMap
-        :bikes="bikes"
-        :user-lat="store.activeProfile!.lat!"
-        :user-lng="store.activeProfile!.lng!"
-      />
+      <BikeMap :bikes="bikes" :user-lat="store.lat!" :user-lng="store.lng!" />
 
       <!-- Minimal error toast -->
       <div

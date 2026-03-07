@@ -82,20 +82,19 @@ export function useBikes(opts?: { proxyBase?: string }) {
   }
 
   async function fetchOnce() {
-    const profile = store.activeProfile;
-    if (!profile || profile.lat == null || profile.lng == null) {
+    if (!store.hasPosition) {
       bikes.value = [];
       return;
     }
 
-    const userLat = profile.lat;
-    const userLng = profile.lng;
+    const userLat = store.lat!;
+    const userLng = store.lng!;
 
     loading.value = true;
     error.value = null;
     try {
       const results = await Promise.allSettled(
-        profile.providers.map((p) => fetchProvider(p, userLat, userLng)),
+        store.providers.map((p) => fetchProvider(p, userLat, userLng)),
       );
 
       const all: Bike[] = [];
@@ -106,7 +105,7 @@ export function useBikes(opts?: { proxyBase?: string }) {
           all.push(...result.value);
         } else {
           errors.push(
-            `${profile.providers[i]}: ${result.reason?.message ?? result.reason}`,
+            `${store.providers[i]}: ${result.reason?.message ?? result.reason}`,
           );
         }
       }
@@ -118,24 +117,23 @@ export function useBikes(opts?: { proxyBase?: string }) {
       let filtered = all;
 
       // Max distance filter (-1 = unlimited)
-      if (profile.maxDistance !== UNSET && profile.maxDistance > 0) {
+      if (store.maxDistance !== UNSET && store.maxDistance > 0) {
         filtered = filtered.filter(
-          (b) => b.distance != null && b.distance <= profile.maxDistance,
+          (b) => b.distance != null && b.distance <= store.maxDistance,
         );
       }
 
       // Min battery filter (-1 = any)
-      if (profile.minBattery !== UNSET && profile.minBattery > 0) {
+      if (store.minBattery !== UNSET && store.minBattery > 0) {
         filtered = filtered.filter(
           (b) =>
-            b.battery_percent != null &&
-            b.battery_percent >= profile.minBattery,
+            b.battery_percent != null && b.battery_percent >= store.minBattery,
         );
       }
 
       bikes.value = filtered
         .sort((a, b) => (a.distance ?? 0) - (b.distance ?? 0))
-        .slice(0, profile.limit);
+        .slice(0, store.limit);
     } catch (err: any) {
       console.error(err);
       error.value = err?.message ?? String(err);
@@ -153,10 +151,9 @@ export function useBikes(opts?: { proxyBase?: string }) {
 
   function scheduleNext() {
     if (stopped || !active.value) return;
-    const profile = store.activeProfile;
-    if (!profile) return;
-    const intervalMs = profile.pollInterval * 1000;
-    nextRefresh.value = profile.pollInterval;
+    if (!store.hasPosition) return;
+    const intervalMs = store.pollInterval * 1000;
+    nextRefresh.value = store.pollInterval;
     timer = setTimeout(async () => {
       await fetchOnce();
       scheduleNext();
@@ -188,24 +185,22 @@ export function useBikes(opts?: { proxyBase?: string }) {
     nextRefresh.value = 0;
   }
 
-  // Watch for profile changes → restart if ready
+  // Watch for store changes → restart if ready
   watch(
-    () => {
-      const p = store.activeProfile;
-      if (!p) return null;
-      return [
-        p.id,
-        p.lat,
-        p.lng,
-        p.providers,
-        p.limit,
-        p.maxDistance,
-        p.minBattery,
-        p.pollInterval,
-      ];
-    },
+    () =>
+      store.hasPosition
+        ? [
+            store.lat,
+            store.lng,
+            store.providers,
+            store.limit,
+            store.maxDistance,
+            store.minBattery,
+            store.pollInterval,
+          ]
+        : null,
     (val) => {
-      if (!val || !store.hasPosition) {
+      if (!val) {
         stopPolling();
         return;
       }
@@ -217,7 +212,7 @@ export function useBikes(opts?: { proxyBase?: string }) {
   );
 
   onMounted(() => {
-    if (store.hasActiveProfile && store.hasPosition) {
+    if (store.hasPosition) {
       startPolling();
     }
   });

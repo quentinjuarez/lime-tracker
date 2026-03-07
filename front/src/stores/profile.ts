@@ -1,122 +1,77 @@
 import { defineStore } from 'pinia';
 import {
-  type ProfileData,
-  type ProfileMode,
   type Provider,
-  createDefaultProfile,
+  type LocationMode,
+  type ProfileState,
+  createDefaultState,
   FILTER_BOUNDS,
   UNSET,
 } from '../types';
 
-export interface ProfileStoreState {
-  profiles: ProfileData[];
-  activeProfileId: string | null;
-}
-
 export const useProfileStore = defineStore('profile', {
-  state: (): ProfileStoreState => ({
-    profiles: [],
-    activeProfileId: null,
-  }),
+  state: (): ProfileState => createDefaultState(),
 
   getters: {
-    activeProfile(): ProfileData | null {
-      if (!this.activeProfileId) return null;
-      return this.profiles.find((p) => p.id === this.activeProfileId) ?? null;
-    },
-    geoProfile(): ProfileData | null {
-      return this.profiles.find((p) => p.mode === 'geolocation') ?? null;
-    },
-    customProfile(): ProfileData | null {
-      return this.profiles.find((p) => p.mode === 'custom') ?? null;
-    },
-    hasActiveProfile(): boolean {
-      return this.activeProfile !== null;
-    },
     hasPosition(): boolean {
-      return this.activeProfile?.lat != null && this.activeProfile?.lng != null;
+      return this.lat != null && this.lng != null;
     },
   },
 
   actions: {
-    // ── Profile management ───────────────────────────────────────────
-
-    /** Create (or reuse) the profile for the given mode and activate it. */
-    ensureProfile(mode: ProfileMode): ProfileData {
-      const existing = this.profiles.find((p) => p.mode === mode);
-      if (existing) {
-        this.activeProfileId = existing.id;
-        return existing;
-      }
-      const name = mode === 'geolocation' ? 'GPS' : 'Custom';
-      const profile = createDefaultProfile(name, mode);
-      this.profiles.push(profile);
-      this.activeProfileId = profile.id;
-      return profile;
+    setPosition(lat: number, lng: number, mode?: LocationMode) {
+      this.lat = lat;
+      this.lng = lng;
+      if (mode) this.locationMode = mode;
     },
 
-    selectProfile(id?: string) {
-      if (!id) return;
-      if (this.profiles.some((p) => p.id === id)) {
-        this.activeProfileId = id;
-      }
+    setLocationMode(mode: LocationMode) {
+      this.locationMode = mode;
     },
 
-    // ── Active profile mutations ─────────────────────────────────────
-
-    setPosition(lat: number, lng: number) {
-      const p = this.activeProfile;
-      if (!p) return;
-      p.lat = lat;
-      p.lng = lng;
+    clearPosition() {
+      this.lat = null;
+      this.lng = null;
     },
 
     toggleProvider(provider: Provider) {
-      const p = this.activeProfile;
-      if (!p) return;
-      const idx = p.providers.indexOf(provider);
+      const idx = this.providers.indexOf(provider);
       if (idx === -1) {
-        p.providers.push(provider);
-      } else if (p.providers.length > 1) {
-        p.providers.splice(idx, 1);
+        this.providers.push(provider);
+      } else if (this.providers.length > 1) {
+        this.providers.splice(idx, 1);
       }
     },
 
     setLimit(value: number) {
-      const p = this.activeProfile;
-      if (!p) return;
       const b = FILTER_BOUNDS.limit;
-      p.limit = Math.max(b.min, Math.min(b.max, value));
+      this.limit = Math.max(b.min, Math.min(b.max, value));
     },
 
     setMaxDistance(value: number) {
-      const p = this.activeProfile;
-      if (!p) return;
-      const b = FILTER_BOUNDS.maxDistance;
-      p.maxDistance =
-        value === UNSET ? UNSET : Math.max(0, Math.min(b.max, value));
+      this.maxDistance =
+        value === UNSET
+          ? UNSET
+          : Math.max(0, Math.min(FILTER_BOUNDS.maxDistance.max, value));
     },
 
     setMinBattery(value: number) {
-      const p = this.activeProfile;
-      if (!p) return;
-      const b = FILTER_BOUNDS.minBattery;
-      p.minBattery =
-        value === UNSET ? UNSET : Math.max(0, Math.min(b.max, value));
+      this.minBattery =
+        value === UNSET
+          ? UNSET
+          : Math.max(0, Math.min(FILTER_BOUNDS.minBattery.max, value));
     },
 
     setPollInterval(value: number) {
-      const p = this.activeProfile;
-      if (!p) return;
       const b = FILTER_BOUNDS.pollInterval;
-      p.pollInterval = Math.max(b.min, Math.min(b.max, value));
+      this.pollInterval = Math.max(b.min, Math.min(b.max, value));
     },
 
-    resetActiveProfile() {
-      const p = this.activeProfile;
-      if (!p) return;
-      const defaults = createDefaultProfile(p.name, p.mode);
-      Object.assign(p, { ...defaults, id: p.id });
+    resetFilters() {
+      const d = createDefaultState();
+      this.providers = d.providers;
+      this.limit = FILTER_BOUNDS.limit.default;
+      this.maxDistance = FILTER_BOUNDS.maxDistance.default;
+      this.minBattery = FILTER_BOUNDS.minBattery.default;
     },
   },
 

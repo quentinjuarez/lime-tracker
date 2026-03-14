@@ -5,7 +5,7 @@
     <h1 class="text-2xl font-bold uppercase tracking-widest glow-sm">
       {{ t('onboarding.title') }}
     </h1>
-    <p class="text-led/70 text-sm text-center max-w-sm">
+    <p class="text-led/80 text-sm text-center max-w-sm">
       {{ t('onboarding.subtitle') }}
     </p>
 
@@ -26,7 +26,7 @@
 
       <!-- Separator -->
       <div
-        class="flex items-center gap-3 text-led/40 text-[11px] uppercase tracking-widest"
+        class="flex items-center gap-3 text-led/60 text-[11px] uppercase tracking-widest"
       >
         <span class="flex-1 h-px bg-led/20" />
         {{ t('onboarding.or') }}
@@ -57,7 +57,7 @@
         {{ t('onboarding.confirmLocation') }}
       </BaseButton>
 
-      <details class="text-led/50 text-[11px]">
+      <details class="text-led/60 text-[11px]">
         <summary
           class="cursor-pointer hover:text-led transition-colors tracking-widest text-center"
         >

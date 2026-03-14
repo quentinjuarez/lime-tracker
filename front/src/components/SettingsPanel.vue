@@ -188,18 +188,7 @@
             <h3 class="text-xs uppercase tracking-widest text-led/80">
               {{ t('settings.language') }}
             </h3>
-            <div class="flex gap-2">
-              <BaseButton
-                v-for="loc in SUPPORTED_LOCALES"
-                :key="loc"
-                :variant="locale === loc ? 'default' : 'ghost'"
-                size="sm"
-                class="uppercase"
-                @click="switchLocale(loc)"
-              >
-                {{ loc }}
-              </BaseButton>
-            </div>
+            <LanguageSwitcher />
           </section>
 
           <!-- Reset -->
@@ -247,9 +236,8 @@ import { useGeolocation } from '../composables/useGeolocation';
 import { parseLocation } from '../utils/parseLocation';
 import { metersToWalkMinutes, walkMinutesToMeters } from '../utils/walking';
 import { type Provider, ALL_PROVIDERS, FILTER_BOUNDS, UNSET } from '../types';
-
-import { setLocale, SUPPORTED_LOCALES, type Locale } from '../i18n';
 import AppFooter from './AppFooter.vue';
+import LanguageSwitcher from './LanguageSwitcher.vue';
 
 const props = defineProps<{ open: boolean }>();
 const emit = defineEmits<{ close: [] }>();
@@ -257,11 +245,7 @@ const emit = defineEmits<{ close: [] }>();
 const store = useProfileStore();
 const { error: geoError, loading: geoLoading, locate } = useGeolocation();
 const { theme, toggleTheme } = useTheme();
-const { t, locale } = useI18n();
-
-function switchLocale(loc: Locale) {
-  setLocale(loc);
-}
+const { t } = useI18n();
 
 // ── Manual location input ────────────────────────────────────────────
 const showManualInput = ref(false);

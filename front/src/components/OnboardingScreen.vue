@@ -69,6 +69,8 @@
       </details>
     </div>
 
+    <LanguageSwitcher />
+
     <!-- Footer legal links -->
     <AppFooter />
   </div>
@@ -84,6 +86,7 @@ import { useGeolocation } from '../composables/useGeolocation';
 import { useProfileStore } from '../stores/profile';
 import { parseLocation, LOCATION_FORMATS } from '../utils/parseLocation';
 import AppFooter from './AppFooter.vue';
+import LanguageSwitcher from './LanguageSwitcher.vue';
 
 const { t } = useI18n();
 const store = useProfileStore();

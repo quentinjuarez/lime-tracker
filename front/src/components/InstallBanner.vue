@@ -1,19 +1,9 @@
 <template>
   <Transition name="slide-up">
-    <div
-      v-if="showBanner"
-      class="fixed bottom-0 inset-x-0 z-[1100] p-4 safe-area-inset-bottom"
-    >
+    <div v-if="showBanner" class="fixed bottom-4 inset-x-0 z-1100 p-4">
       <div
-        class="max-w-sm mx-auto bg-black border border-led/30 rounded-xl px-4 py-3 shadow-2xl shadow-black/60 backdrop-blur-sm flex items-center gap-3"
+        class="max-w-sm mx-auto bg-black border border-led/30 rounded-xl px-4 py-3 shadow-2xl shadow-black/60 backdrop-blur-sm flex flex-col md:flex-row md:items-center gap-3"
       >
-        <!-- Icon -->
-        <div
-          class="shrink-0 w-10 h-10 rounded-lg bg-led/10 border border-led/20 flex items-center justify-center text-xl"
-        >
-          🚲
-        </div>
-
         <!-- Text -->
         <div class="flex-1 min-w-0">
           <p
@@ -27,7 +17,7 @@
         </div>
 
         <!-- Actions -->
-        <div class="flex items-center gap-2 shrink-0">
+        <div class="flex items-center gap-2 shrink-0 w-full md:w-auto">
           <button
             type="button"
             class="text-[10px] font-mono text-led/40 hover:text-led/70 transition-colors uppercase tracking-wider"

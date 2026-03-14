@@ -60,17 +60,15 @@
             <strong class="uppercase">Vélib</strong>
             <br />
             <span>
-              {{
-                $t('bikeMap.num_bikes_available', entity.num_bikes_available)
-              }}
+              {{ t('bikeMap.num_bikes_available', entity.num_bikes_available) }}
             </span>
             <br />
             <span>
-              {{ $t('bikeMap.mechanical', entity.mechanical) }}
+              {{ t('bikeMap.mechanical', entity.mechanical) }}
             </span>
             <br />
             <span>
-              {{ $t('bikeMap.ebike', entity.ebike) }}
+              {{ t('bikeMap.ebike', entity.ebike) }}
             </span>
             <br />
             {{ formatDistance(entity.distance) }}

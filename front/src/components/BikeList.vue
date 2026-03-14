@@ -36,7 +36,6 @@
             class="grid grid-cols-[80px_1fr_60px_100px] gap-2 px-4 py-2 border-b border-led/30 text-led/80 text-[11px] uppercase tracking-widest"
           >
             <span class="glow-sm">{{ t('bikeList.provider') }}</span>
-            <span class="glow-sm">{{ t('bikeList.vehicle') }}</span>
             <span class="text-right glow-sm">{{ t('bikeList.battery') }}</span>
             <span class="text-right glow-sm">{{ t('bikeList.distance') }}</span>
           </div>
@@ -65,22 +64,6 @@
               {{ entity.provider }}
             </span>
 
-            <!-- Vehicle / Station -->
-            <span
-              v-if="entity.kind === 'bike'"
-              class="text-led text-sm tracking-wider glow truncate"
-            >
-              {{ entity.bike_id }}
-            </span>
-            <span v-else class="text-led text-sm glow">
-              <span class="truncate block leading-tight">
-                {{ entity.name ?? entity.stationCode }}
-              </span>
-              <span class="text-led/50 text-[10px] font-mono tracking-wide">
-                ⚙︎{{ entity.mechanical }}&nbsp;·&nbsp;⚡{{ entity.ebike }}
-              </span>
-            </span>
-
             <!-- Battery / Available bikes -->
             <span
               v-if="entity.kind === 'bike'"
@@ -98,7 +81,7 @@
               class="text-right text-sm font-bold tracking-wide glow text-velib-brand"
               :title="`${entity.num_docks_available} docks libres`"
             >
-              {{ entity.num_bikes_available }}🚲
+              {{ entity.num_bikes_available }}
             </span>
 
             <!-- Distance -->

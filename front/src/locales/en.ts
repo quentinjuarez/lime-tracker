@@ -20,12 +20,15 @@ export default {
     title: 'Vehicles',
     provider: 'Provider',
     vehicle: 'Vehicle',
-    battery: 'Batt.',
+    battery: 'Batt./Nb bikes',
     distance: 'Dist.',
     noVehicles: 'No vehicles nearby',
   },
   bikeMap: {
     me: 'Me',
+    num_bikes_available: '{n} bike available | {n} bikes available',
+    mechanical: '{n} mechanical | {n} mechanicals',
+    ebike: '{n} electric | {n} electrics',
   },
   settings: {
     title: 'Settings',

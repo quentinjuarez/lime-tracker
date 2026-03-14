@@ -14,21 +14,27 @@
         layer-type="base"
       />
 
-      <!-- User -->
-      <l-circle-marker
-        :lat-lng="[userLat, userLng]"
-        :radius="7"
-        color="#ad46ff"
-        :fill="true"
-        fill-color="#ad46ff"
-        :fill-opacity="0.333"
+      <l-marker
+        :lat-lng="[props.userLat, props.userLng]"
+        :icon="
+          createCircularIcon({
+            color: 'var(--color-led)',
+            isDark: theme === 'dark',
+            size: 26,
+            radius: 10,
+            strokeWidth: 3,
+            percent: 100,
+            innerCircleRadius: 5.5,
+          })
+        "
       >
-        <l-tooltip :options="{ permanent: false }">{{
-          t('bikeMap.me')
-        }}</l-tooltip>
-      </l-circle-marker>
+        <l-tooltip
+          :options="{ permanent: false, sticky: true, interactive: false }"
+        >
+          {{ t('bikeMap.me') }}
+        </l-tooltip>
+      </l-marker>
 
-      <!-- Bikes & Stations -->
       <l-marker
         v-for="entity in bikes"
         :key="
@@ -42,7 +48,6 @@
         <l-tooltip
           :options="{ permanent: false, sticky: true, interactive: false }"
         >
-          <!-- Free-floating bike tooltip -->
           <div v-if="entity.kind === 'bike'" class="text-xs">
             <strong class="uppercase">{{ entity.provider }}</strong>
             <br />
@@ -51,23 +56,29 @@
               {{ entity.battery_percent }}%
             </template>
           </div>
-          <!-- Vélib station tooltip -->
           <div v-else class="text-xs">
             <strong class="uppercase">Vélib</strong>
             <br />
-            <span v-if="entity.name">{{ entity.name }}<br /></span>
-            🚲 {{ entity.num_bikes_available }}
-            <span class="opacity-70">
-              (⚙ {{ entity.mechanical }} · ⚡ {{ entity.ebike }}) </span
-            ><br />
-            🅿 {{ entity.num_docks_available }}<br />
+            <span>
+              {{
+                $t('bikeMap.num_bikes_available', entity.num_bikes_available)
+              }}
+            </span>
+            <br />
+            <span>
+              {{ $t('bikeMap.mechanical', entity.mechanical) }}
+            </span>
+            <br />
+            <span>
+              {{ $t('bikeMap.ebike', entity.ebike) }}
+            </span>
+            <br />
             {{ formatDistance(entity.distance) }}
           </div>
         </l-tooltip>
       </l-marker>
     </l-map>
 
-    <!-- Legend overlay -->
     <div
       class="absolute bottom-4 left-4 text-xs px-3 py-2 rounded-lg z-1000 space-y-1 border"
       :class="
@@ -77,7 +88,7 @@
       "
     >
       <div class="flex items-center gap-2">
-        <span class="w-3 h-3 rounded-full bg-purple-500 inline-block"></span>
+        <span class="w-3 h-3 rounded-full bg-led inline-block"></span>
         {{ t('bikeMap.me') }}
       </div>
       <div class="flex items-center gap-2">
@@ -104,13 +115,7 @@
 import { computed, ref, onMounted, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import L from 'leaflet';
-import {
-  LMap,
-  LTileLayer,
-  LCircleMarker,
-  LMarker,
-  LTooltip,
-} from '@vue-leaflet/vue-leaflet';
+import { LMap, LTileLayer, LMarker, LTooltip } from '@vue-leaflet/vue-leaflet';
 import 'leaflet/dist/leaflet.css';
 import type {
   Bike,
@@ -153,37 +158,49 @@ onMounted(() => {
 const zoom = 17;
 const center = computed<[number, number]>(() => [props.userLat, props.userLng]);
 
-// Leaflet needs raw hex values
-// --color-lime-brand: #04dd01;
-// --color-voi-brand: #f26a61;
-// --color-dott-brand: #00a8e8;
-// --color-velib-brand: #2584fd;
 const PROVIDER_HEX: Record<Provider, string> = {
-  lime: '#04dd01',
-  voi: '#f26a61',
-  dott: '#00a8e8',
-  velib: '#2584fd',
+  lime: 'var(--color-lime-brand)',
+  voi: 'var(--color-voi-brand)',
+  dott: 'var(--color-dott-brand)',
+  velib: 'var(--color-velib-brand)',
 };
 
 function markerColor(provider: Provider): string {
   return PROVIDER_HEX[provider];
 }
 
-function bikeIcon(bike: Bike): L.Icon {
-  const color = markerColor(bike.provider);
-  const isDark = theme.value === 'dark';
-  const SIZE = 26;
-  const CX = SIZE / 2;
-  const R = 10;
-  const SW = 3; // stroke-width of the progress arc
-  const C = 2 * Math.PI * R; // circumference ≈ 62.83
+function createCircularIcon(options: {
+  color: string;
+  isDark: boolean;
+  size: number;
+  radius: number;
+  strokeWidth: number;
+  percent: number | null;
+  text?: string;
+  innerCircleRadius?: number;
+  opacity?: number;
+}): L.Icon {
+  const {
+    color,
+    isDark,
+    size,
+    radius: R,
+    strokeWidth: SW,
+    percent,
+    text,
+    innerCircleRadius,
+    opacity = 1,
+  } = options;
 
-  const bgFill = isDark ? 'rgba(0,0,0,0.55)' : 'rgba(255,255,255,0.75)';
+  const CX = size / 2;
+  const C = 2 * Math.PI * R;
+
+  const bgFill = isDark ? 'rgba(0,0,0,0.65)' : 'rgba(255,255,255,0.85)';
   const trackStroke = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.14)';
 
   let arcSvg = '';
-  if (bike.battery_percent != null) {
-    const dash = (bike.battery_percent / 100) * C;
+  if (percent != null) {
+    const dash = percent * C;
     arcSvg = `
       <circle cx="${CX}" cy="${CX}" r="${R}" fill="none"
         stroke="${trackStroke}" stroke-width="${SW}"/>
@@ -193,50 +210,71 @@ function bikeIcon(bike: Bike): L.Icon {
         stroke-linecap="round"
         transform="rotate(-90 ${CX} ${CX})"/>`;
   } else {
-    // No battery info: full colored ring
     arcSvg = `<circle cx="${CX}" cy="${CX}" r="${R}" fill="none"
       stroke="${color}" stroke-width="${SW}" opacity="0.5"/>`;
   }
 
-  const svg = `<svg width="${SIZE}" height="${SIZE}" viewBox="0 0 ${SIZE} ${SIZE}" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="${CX}" cy="${CX}" r="${R + 1}" fill="${bgFill}"/>
+  let centerElement = '';
+
+  if (innerCircleRadius !== undefined) {
+    centerElement += `<circle cx="${CX}" cy="${CX}" r="${innerCircleRadius}" fill="${color}"/>`;
+  }
+
+  if (text !== undefined) {
+    const fontSize = text.length > 2 ? 10 : 12;
+    const yOffset = CX + fontSize * 0.35;
+    centerElement += `<text x="${CX}" y="${yOffset}" text-anchor="middle"
+      font-size="${fontSize}" font-weight="700" fill="#ffffff"
+      font-family="SF Mono, Fira Code, Menlo, monospace">${text}</text>`;
+  }
+
+  const svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg" opacity="${opacity}">
+    <circle cx="${CX}" cy="${CX}" r="${R + SW / 2}" fill="${bgFill}"/>
     ${arcSvg}
-    <circle cx="${CX}" cy="${CX}" r="5.5" fill="${color}"/>
+    ${centerElement}
   </svg>`;
 
   return L.divIcon({
     html: svg,
     className: '',
-    iconSize: [SIZE, SIZE],
+    iconSize: [size, size],
     iconAnchor: [CX, CX],
   }) as unknown as L.Icon;
 }
 
+function bikeIcon(bike: Bike): L.Icon {
+  return createCircularIcon({
+    color: markerColor(bike.provider),
+    isDark: theme.value === 'dark',
+    size: 26,
+    radius: 10,
+    strokeWidth: 3,
+    percent: bike.battery_percent != null ? bike.battery_percent / 100 : null,
+    innerCircleRadius: 5.5,
+  });
+}
+
 function stationIcon(station: VelibStation): L.Icon {
   const count = station.num_bikes_available;
-  const color = PROVIDER_HEX.velib;
-  const isDark = theme.value === 'dark';
-  const bgFill = isDark ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.85)';
-  const W = 34;
-  const H = 26;
-  const r = 4; // corner radius
+  const eBikes = station.ebike || 0;
+  const mechBikes = station.mechanical || 0;
+  const totalCalculated = eBikes + mechBikes;
 
-  // Opacity reduced if station is not renting / no bikes
-  const opacity = station.is_renting === 0 || count === 0 ? '0.45' : '1';
+  const percent = totalCalculated > 0 ? eBikes / totalCalculated : 0;
 
-  const svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" opacity="${opacity}">
-    <rect x="1" y="1" width="${W - 2}" height="${H - 2}" rx="${r}" fill="${bgFill}" stroke="${color}" stroke-width="2"/>
-    <text x="${W / 2}" y="${H / 2 + 4.5}" text-anchor="middle"
-      font-size="12" font-weight="700" fill="${color}"
-      font-family="SF Mono, Fira Code, Menlo, monospace">${count}</text>
-  </svg>`;
+  const opacity = station.is_renting === 0 || count === 0 ? 0.45 : 1;
 
-  return L.divIcon({
-    html: svg,
-    className: '',
-    iconSize: [W, H],
-    iconAnchor: [W / 2, H / 2],
-  }) as unknown as L.Icon;
+  return createCircularIcon({
+    color: markerColor('velib'),
+    isDark: theme.value === 'dark',
+    size: 34,
+    radius: 14,
+    strokeWidth: 3.5,
+    percent: percent,
+    text: count.toString(),
+    innerCircleRadius: 9.5,
+    opacity: opacity,
+  });
 }
 
 function formatDistance(m?: number) {

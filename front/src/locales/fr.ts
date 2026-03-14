@@ -21,12 +21,15 @@ export default {
     title: 'Véhicules',
     provider: 'Opérateur',
     vehicle: 'Véhicule',
-    battery: 'Batt.',
+    battery: 'Batt./Nb vélos',
     distance: 'Dist.',
     noVehicles: 'Aucun véhicule à proximité',
   },
   bikeMap: {
     me: 'Moi',
+    num_bikes_available: '{n} vélo disponible | {n} vélos disponibles',
+    mechanical: '{n} mécanique | {n} mécaniques',
+    ebike: '{n} électrique | {n} électriques',
   },
   settings: {
     title: 'Paramètres',

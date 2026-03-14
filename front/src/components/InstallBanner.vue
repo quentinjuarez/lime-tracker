@@ -2,7 +2,7 @@
   <Transition name="slide-up">
     <div v-if="showBanner" class="fixed bottom-4 inset-x-0 z-1100 p-4">
       <div
-        class="max-w-sm mx-auto bg-black border border-led/30 rounded-xl px-4 py-3 shadow-2xl shadow-black/60 backdrop-blur-sm flex flex-col md:flex-row md:items-center gap-3"
+        class="max-w-sm mx-auto bg-black/10 border border-led/30 rounded-xl px-4 py-3 shadow-2xl backdrop-blur-sm flex flex-col md:flex-row md:items-center gap-3"
       >
         <!-- Text -->
         <div class="flex-1 min-w-0">
@@ -17,21 +17,23 @@
         </div>
 
         <!-- Actions -->
-        <div class="flex items-center gap-2 shrink-0 w-full md:w-auto">
-          <button
-            type="button"
-            class="text-[10px] font-mono text-led/40 hover:text-led/70 transition-colors uppercase tracking-wider"
+        <div class="flex items-center gap-2 flex-none w-full md:w-auto">
+          <BaseButton
+            variant="ghost"
+            size="sm"
+            class="uppercase w-full md:w-auto"
             @click="onDismiss"
           >
             {{ t('install.later') }}
-          </button>
-          <button
-            type="button"
-            class="text-xs font-mono font-bold text-black bg-led hover:bg-led/80 transition-colors uppercase tracking-wider rounded-lg px-3 py-1.5"
+          </BaseButton>
+
+          <BaseButton
+            size="sm"
+            class="uppercase w-full md:w-auto"
             @click="onInstall"
           >
             {{ t('install.install') }}
-          </button>
+          </BaseButton>
         </div>
       </div>
     </div>
@@ -41,6 +43,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { useInstallPrompt } from '../composables/useInstallPrompt';
+import BaseButton from './BaseButton.vue';
 
 const { t } = useI18n();
 const { showBanner, triggerInstall, dismiss } = useInstallPrompt();

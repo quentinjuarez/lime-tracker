@@ -19,19 +19,7 @@
               {{ t('settings.title') }}
             </h2>
             <div class="flex items-center gap-2">
-              <BaseButton
-                variant="ghost"
-                size="sm"
-                class="px-2!"
-                :title="
-                  theme === 'dark'
-                    ? t('settings.lightMode')
-                    : t('settings.darkMode')
-                "
-                @click="toggleTheme"
-              >
-                {{ theme === 'dark' ? '☀️' : '🌙' }}
-              </BaseButton>
+              <ThemeSwitcher />
               <BaseButton variant="ghost" size="sm" class="px-2!" @click="save">
                 ✕
               </BaseButton>
@@ -230,7 +218,6 @@ import BaseButton from './BaseButton.vue';
 import BaseInput from './BaseInput.vue';
 import BaseSlider from './BaseSlider.vue';
 import SpinnerIcon from './SpinnerIcon.vue';
-import { useTheme } from '../composables/useTheme';
 import { useProfileStore } from '../stores/profile';
 import { useGeolocation } from '../composables/useGeolocation';
 import { parseLocation } from '../utils/parseLocation';
@@ -238,13 +225,13 @@ import { metersToWalkMinutes, walkMinutesToMeters } from '../utils/walking';
 import { type Provider, ALL_PROVIDERS, FILTER_BOUNDS, UNSET } from '../types';
 import AppFooter from './AppFooter.vue';
 import LanguageSwitcher from './LanguageSwitcher.vue';
+import ThemeSwitcher from './ThemeSwitcher.vue';
 
 const props = defineProps<{ open: boolean }>();
 const emit = defineEmits<{ close: [] }>();
 
 const store = useProfileStore();
 const { error: geoError, loading: geoLoading, locate } = useGeolocation();
-const { theme, toggleTheme } = useTheme();
 const { t } = useI18n();
 
 // ── Manual location input ────────────────────────────────────────────

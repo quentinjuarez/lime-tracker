@@ -69,7 +69,9 @@
       </details>
     </div>
 
-    <LanguageSwitcher />
+    <div class="flex items-center gap-2 mt-4">
+      <LanguageSwitcher /> <span>-</span> <ThemeSwitcher />
+    </div>
 
     <!-- Footer legal links -->
     <AppFooter />
@@ -87,6 +89,7 @@ import { useProfileStore } from '../stores/profile';
 import { parseLocation, LOCATION_FORMATS } from '../utils/parseLocation';
 import AppFooter from './AppFooter.vue';
 import LanguageSwitcher from './LanguageSwitcher.vue';
+import ThemeSwitcher from './ThemeSwitcher.vue';
 
 const { t } = useI18n();
 const store = useProfileStore();

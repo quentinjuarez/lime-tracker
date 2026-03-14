@@ -68,6 +68,9 @@
         </ul>
       </details>
     </div>
+
+    <!-- Footer legal links -->
+    <AppFooter />
   </div>
 </template>
 
@@ -80,6 +83,7 @@ import SpinnerIcon from './SpinnerIcon.vue';
 import { useGeolocation } from '../composables/useGeolocation';
 import { useProfileStore } from '../stores/profile';
 import { parseLocation, LOCATION_FORMATS } from '../utils/parseLocation';
+import AppFooter from './AppFooter.vue';
 
 const { t } = useI18n();
 const store = useProfileStore();

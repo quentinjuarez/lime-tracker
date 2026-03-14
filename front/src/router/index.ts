@@ -14,6 +14,16 @@ const router = createRouter({
       component: EmbedView,
       meta: { embed: true },
     },
+    {
+      path: '/legal',
+      component: () => import('../views/LegalNotice.vue'),
+      meta: { title: 'Mentions légales & CGU' },
+    },
+    {
+      path: '/privacy',
+      component: () => import('../views/PrivacyPolicy.vue'),
+      meta: { title: 'Politique de confidentialité' },
+    },
   ],
 });
 

@@ -225,6 +225,9 @@
                 : '🔗 ' + t('settings.copyLink')
             }}
           </BaseButton>
+
+          <!-- Footer legal links -->
+          <AppFooter />
         </div>
       </div>
     </Transition>
@@ -246,6 +249,7 @@ import { metersToWalkMinutes, walkMinutesToMeters } from '../utils/walking';
 import { type Provider, ALL_PROVIDERS, FILTER_BOUNDS, UNSET } from '../types';
 
 import { setLocale, SUPPORTED_LOCALES, type Locale } from '../i18n';
+import AppFooter from './AppFooter.vue';
 
 const props = defineProps<{ open: boolean }>();
 const emit = defineEmits<{ close: [] }>();

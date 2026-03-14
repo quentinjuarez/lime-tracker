@@ -30,6 +30,119 @@ export default {
     mechanical: '{n} mechanical | {n} mechanicals',
     ebike: '{n} electric | {n} electrics',
   },
+  footer: {
+    legal: 'Legal Notice & ToS',
+    privacy: 'Privacy Policy',
+  },
+  legal: {
+    back: 'Back',
+  },
+  legalNotice: {
+    title: 'Legal Notice & Terms of Use',
+    updatedAt: 'Last updated: {date}',
+    s1: {
+      title: '1. Publisher',
+      publishedBy: 'This application is published by:',
+      nameLabel: 'Name:',
+      emailLabel: 'Email:',
+    },
+    s2: {
+      title: '2. Hosting',
+      hostedBy: 'The application is hosted by:',
+    },
+    s3: {
+      title: '3. Purpose of the Service',
+      content:
+        'Bike Tracker is a free, non-commercial web application that provides real-time visibility of available micro-mobility vehicles (bikes, electric scooters) and docking stations, sourced from public GBFS data feeds.',
+    },
+    s4: {
+      title: '4. Service Provided \u201cAs Is\u201d',
+      intro:
+        'The application is provided {asIs}, without warranty of any kind, express or implied, including but not limited to warranties of continuous availability, uninterrupted access, accuracy of displayed data, or fitness for a particular purpose.',
+      asIs: '\u201cas is\u201d',
+      bullets: '',
+      closing:
+        'The publisher reserves the right to suspend, modify, or permanently discontinue the service at any time and without notice, without giving rise to any compensation.',
+    },
+    s5: {
+      title: '5. Disclaimer on Third-Party Data',
+      intro:
+        'Vehicle and station availability data (number of bikes, scooters, docks, battery levels, etc.) is retrieved in real time from {thirdParty} via public GBFS (General Bikeshare Feed Specification) feeds provided by operators such as Lime, Voi, Dott and V\u00e9lib M\u00e9tropole.',
+      thirdParty: 'third-party sources',
+      content:
+        'This data is the exclusive property of its respective providers. The publisher of Bike Tracker has no control over its accuracy, completeness, freshness, or availability. Accordingly, the publisher shall not be liable for any direct or indirect loss arising from the use of, or inability to use, this data, or any decision made based on it (e.g. a wasted journey).',
+    },
+    s6: {
+      title: '6. Non-Commercial and Informational Use',
+      intro:
+        'Bike Tracker is intended for {strictlyPersonal}. Any commercial exploitation, redistribution, or integration into a commercial product or service is prohibited without prior written consent from the publisher.',
+      strictlyPersonal:
+        'strictly personal, non-commercial and informational use only',
+      content:
+        'The names and trademarks of operators mentioned (Lime, Voi, Dott, V\u00e9lib, etc.) are the exclusive property of their respective owners. Their mention in the application is purely informational and does not constitute a partnership, affiliation, or endorsement by those operators.',
+    },
+    s7: {
+      title: '7. Intellectual Property',
+      content:
+        "The application's source code is the property of the publisher. Map tiles are provided by third-party services (OpenStreetMap / CARTO, Esri) under their respective licenses.",
+    },
+    s8: {
+      title: '8. Governing Law and Jurisdiction',
+      content:
+        'These legal notices are governed by French law. In the event of a dispute, and failing an amicable settlement, the competent French courts shall have sole jurisdiction.',
+    },
+  },
+  privacy: {
+    title: 'Privacy Policy',
+    updatedAt: 'Last updated: {date}',
+    s1: {
+      title: '1. General Principle',
+      content:
+        'Bike Tracker is designed with user privacy in mind. The application does not collect any personally identifiable data. No user account is required to use the service.',
+    },
+    s2: {
+      title: '2. Geolocation',
+      intro:
+        "The application may request access to your device's location, only if you explicitly grant permission. This data is used {solelyToCentre}.",
+      solelyToCentre: 'solely to centre the map on your position',
+      p2: 'Your geographic location is processed {locally}, directly in your browser. Your GPS coordinates are {neverSent}, stored remotely, or shared with any third party.',
+      locally: '100% locally',
+      neverSent: 'never sent to any server',
+    },
+    s3: {
+      title: '3. Locally Stored Data',
+      intro:
+        "Some preferences (display language, search filters, manually entered position, light/dark theme) may be saved in your browser's {localStorage} to improve your experience.",
+      localStorage: 'local storage',
+      content:
+        "This data stays exclusively on your device. You can delete it at any time by clearing your browser's site data.",
+    },
+    s4: {
+      title: '4. Cookies and Trackers',
+      intro:
+        'The application {noCookies} (Google Analytics, Matomo, Facebook Pixel, etc.). No audience measurement tool is integrated into Bike Tracker.',
+      noCookies: 'does not use any advertising or tracking cookies',
+    },
+    s5: {
+      title: '5. Third-Party Services and APIs',
+      gbfsLabel: 'Mobility data (GBFS):',
+      gbfsContent:
+        'your browser never contacts operator APIs (Lime, Voi, Dott, V\u00e9lib) directly. Requests are routed through a dedicated server-side proxy. This proxy does not transmit any personal data to operators.',
+      mapLabel: 'Map tiles:',
+      mapContent:
+        'the map uses tiles provided by third-party services (OpenStreetMap / CARTO, Esri). When loading the map, your browser connects to their CDN servers. These services may log technical metadata (IP address, timestamp) in accordance with their own privacy policies. Bike Tracker has no control over these processes.',
+    },
+    s6: {
+      title: '6. Security',
+      content:
+        "No private API keys are exposed client-side. Communications between your browser and the application's proxy server are secured.",
+    },
+    s7: {
+      title: '7. Your Rights (GDPR)',
+      content:
+        'Because the application does not collect any personal data, no data about you is processed within the meaning of the GDPR. However, for any privacy-related question, you may contact the publisher at: {email}',
+    },
+  },
   settings: {
     title: 'Settings',
     location: 'Location',

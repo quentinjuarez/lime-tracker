@@ -15,17 +15,15 @@ app.use(helmet());
 app.disable('x-powered-by');
 
 // CORS: restrict origins in production
-const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
-  ? process.env.ALLOWED_ORIGINS.split(',').map((o) => o.trim())
-  : null; // null = allow all in dev
-
 app.use(
   cors({
     origin: (origin, callback) => {
       // Allow requests with no origin (curl, server-to-server, same-origin)
       if (!origin) return callback(null, true);
-      if (!ALLOWED_ORIGINS) return callback(null, true); // dev: allow all
-      if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+      // dev: allow all
+      if (!process.env.VITE_FRONT_URL) return callback(null, true);
+      // http://localhost:13000 or https://mydomain.com
+      if (process.env.VITE_FRONT_URL === origin) return callback(null, true);
       callback(new Error('Not allowed by CORS'));
     },
     methods: ['GET'],

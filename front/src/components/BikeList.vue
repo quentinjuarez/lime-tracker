@@ -43,8 +43,12 @@
 
           <!-- Rows -->
           <div
-            v-for="(b, i) in bikes"
-            :key="`${b.provider}-${b.bike_id}`"
+            v-for="(entity, i) in bikes"
+            :key="
+              entity.kind === 'bike'
+                ? `${entity.provider}-${entity.bike_id}`
+                : `${entity.provider}-${entity.station_id}`
+            "
             class="grid grid-cols-[80px_1fr_60px_100px] gap-2 items-center px-4 py-2 border-b border-led/30"
             :class="i % 2 === 0 ? 'bg-black' : 'bg-led/0'"
           >
@@ -52,32 +56,56 @@
             <span
               class="text-sm font-bold uppercase tracking-wide glow"
               :class="{
-                'text-lime-brand': b.provider === 'lime',
-                'text-voi-brand': b.provider === 'voi',
-                'text-dott-brand': b.provider === 'dott',
+                'text-lime-brand': entity.provider === 'lime',
+                'text-voi-brand': entity.provider === 'voi',
+                'text-dott-brand': entity.provider === 'dott',
+                'text-velib-brand': entity.provider === 'velib',
               }"
             >
-              {{ b.provider }}
+              {{ entity.provider }}
             </span>
 
-            <!-- Vehicle ID -->
-            <span class="text-led text-sm tracking-wider glow truncate">
-              {{ b.bike_id }}
-            </span>
-
-            <!-- Battery -->
+            <!-- Vehicle / Station -->
             <span
-              class="text-right text-sm font-bold tracking-wide glow"
-              :class="batteryColor(b.battery_percent)"
+              v-if="entity.kind === 'bike'"
+              class="text-led text-sm tracking-wider glow truncate"
             >
-              {{ b.battery_percent != null ? `${b.battery_percent}%` : '---' }}
+              {{ entity.bike_id }}
+            </span>
+            <span v-else class="text-led text-sm glow">
+              <span class="truncate block leading-tight">
+                {{ entity.name ?? entity.stationCode }}
+              </span>
+              <span class="text-led/50 text-[10px] font-mono tracking-wide">
+                ⚙︎{{ entity.mechanical }}&nbsp;·&nbsp;⚡{{ entity.ebike }}
+              </span>
+            </span>
+
+            <!-- Battery / Available bikes -->
+            <span
+              v-if="entity.kind === 'bike'"
+              class="text-right text-sm font-bold tracking-wide glow"
+              :class="batteryColor(entity.battery_percent)"
+            >
+              {{
+                entity.battery_percent != null
+                  ? `${entity.battery_percent}%`
+                  : '---'
+              }}
+            </span>
+            <span
+              v-else
+              class="text-right text-sm font-bold tracking-wide glow text-velib-brand"
+              :title="`${entity.num_docks_available} docks libres`"
+            >
+              {{ entity.num_bikes_available }}🚲
             </span>
 
             <!-- Distance -->
             <span
               class="text-right text-led text-sm font-bold tracking-wide glow"
             >
-              {{ formatDistance(b.distance) }}
+              {{ formatDistance(entity.distance) }}
             </span>
           </div>
 
@@ -96,14 +124,14 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import type { Bike } from '../composables/useBikes';
+import type { MapEntity } from '../composables/useBikes';
 import BaseButton from './BaseButton.vue';
 
 const { t } = useI18n();
 
 defineProps<{
   open: boolean;
-  bikes: Bike[];
+  bikes: MapEntity[];
 }>();
 
 const emit = defineEmits<{ close: [] }>();

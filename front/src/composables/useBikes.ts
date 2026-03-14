@@ -1,9 +1,16 @@
 import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { useProfileStore } from '../stores/profile';
-import { type Bike, type Provider, VEHICLE_TYPES, UNSET } from '../types';
+import {
+  type Bike,
+  type VelibStation,
+  type MapEntity,
+  type Provider,
+  VEHICLE_TYPES,
+  UNSET,
+} from '../types';
 
 // Re-export for convenience
-export type { Bike, Provider } from '../types';
+export type { Bike, VelibStation, MapEntity, Provider } from '../types';
 
 export function haversineDistance(
   lat1: number,
@@ -23,7 +30,7 @@ export function haversineDistance(
 
 export function useBikes(opts?: { proxyBase?: string }) {
   const store = useProfileStore();
-  const bikes = ref<Bike[]>([]);
+  const bikes = ref<MapEntity[]>([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
   const nextRefresh = ref(0);
@@ -65,6 +72,7 @@ export function useBikes(opts?: { proxyBase?: string }) {
               )
             : undefined;
       return {
+        kind: 'bike',
         bike_id: b.bike_id,
         lat,
         lon,
@@ -81,6 +89,39 @@ export function useBikes(opts?: { proxyBase?: string }) {
     });
   }
 
+  async function fetchVelib(
+    userLat: number,
+    userLng: number,
+  ): Promise<VelibStation[]> {
+    const res = await fetch(`${proxyBase}/velib/stations`);
+    if (!res.ok) throw new Error(`velib fetch failed: ${res.status}`);
+    const json = await res.json();
+
+    return (json.stations || []).map((s: any) => {
+      const lat = Number(s.lat);
+      const lon = Number(s.lon);
+      const distance = haversineDistance(userLat, userLng, lat, lon);
+      return {
+        kind: 'station',
+        station_id: s.station_id,
+        stationCode: s.stationCode,
+        name: s.name,
+        lat,
+        lon,
+        capacity: s.capacity,
+        num_bikes_available: s.num_bikes_available ?? 0,
+        mechanical: s.mechanical ?? 0,
+        ebike: s.ebike ?? 0,
+        num_docks_available: s.num_docks_available ?? 0,
+        is_installed: s.is_installed,
+        is_renting: s.is_renting,
+        is_returning: s.is_returning,
+        distance,
+        provider: 'velib' as const,
+      } satisfies VelibStation;
+    });
+  }
+
   async function fetchOnce() {
     if (!store.hasPosition) {
       bikes.value = [];
@@ -93,19 +134,32 @@ export function useBikes(opts?: { proxyBase?: string }) {
     loading.value = true;
     error.value = null;
     try {
-      const results = await Promise.allSettled(
-        store.providers.map((p) => fetchProvider(p, userLat, userLng)),
-      );
+      // Split bike providers from velib
+      const bikeProviders = store.providers.filter(
+        (p) => p !== 'velib',
+      ) as Exclude<Provider, 'velib'>[];
+      const includeVelib = store.providers.includes('velib');
 
-      const all: Bike[] = [];
+      const results = await Promise.allSettled([
+        ...bikeProviders.map((p) => fetchProvider(p, userLat, userLng)),
+        ...(includeVelib ? [fetchVelib(userLat, userLng)] : []),
+      ]);
+
+      const all: MapEntity[] = [];
       const errors: string[] = [];
+      const allProviders = [
+        ...bikeProviders,
+        ...(includeVelib ? ['velib' as const] : []),
+      ];
 
       for (const [i, result] of results.entries()) {
         if (result.status === 'fulfilled') {
-          all.push(...result.value);
+          for (const entity of result.value) {
+            all.push(entity);
+          }
         } else {
           errors.push(
-            `${store.providers[i]}: ${result.reason?.message ?? result.reason}`,
+            `${allProviders[i]}: ${result.reason?.message ?? result.reason}`,
           );
         }
       }
@@ -116,18 +170,20 @@ export function useBikes(opts?: { proxyBase?: string }) {
 
       let filtered = all;
 
-      // Max distance filter (-1 = unlimited)
+      // Max distance filter (-1 = unlimited), applies to all entities
       if (store.maxDistance !== UNSET && store.maxDistance > 0) {
         filtered = filtered.filter(
-          (b) => b.distance != null && b.distance <= store.maxDistance,
+          (e) => e.distance != null && e.distance <= store.maxDistance,
         );
       }
 
-      // Min battery filter (-1 = any)
+      // Min battery filter (-1 = any), only applies to bikes (stations always pass)
       if (store.minBattery !== UNSET && store.minBattery > 0) {
         filtered = filtered.filter(
-          (b) =>
-            b.battery_percent != null && b.battery_percent >= store.minBattery,
+          (e) =>
+            e.kind === 'station' ||
+            (e.battery_percent != null &&
+              e.battery_percent >= store.minBattery),
         );
       }
 

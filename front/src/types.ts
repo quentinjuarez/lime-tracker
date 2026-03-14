@@ -1,13 +1,14 @@
 // ── Providers ───────────────────────────────────────────────────────
 
-export type Provider = 'lime' | 'voi' | 'dott';
+export type Provider = 'lime' | 'voi' | 'dott' | 'velib';
 
-export const ALL_PROVIDERS: Provider[] = ['lime', 'voi', 'dott'];
+export const ALL_PROVIDERS: Provider[] = ['lime', 'voi', 'dott', 'velib'];
 
 export const PROVIDER_COLORS: Record<Provider, string> = {
   lime: '#00de00',
   voi: '#f44336',
   dott: '#f5a623',
+  velib: '#6b3fa0',
 };
 
 // ── Vehicle types ───────────────────────────────────────────────────
@@ -108,6 +109,7 @@ export interface GbfsBike {
 // ── App bike (enriched) ─────────────────────────────────────────────
 
 export interface Bike {
+  kind: 'bike';
   bike_id: string;
   lat: number;
   lon: number;
@@ -121,6 +123,31 @@ export interface Bike {
   distance?: number;
   provider: Provider;
 }
+
+// ── Vélib station (enriched) ────────────────────────────────────────
+
+export interface VelibStation {
+  kind: 'station';
+  station_id: string;
+  stationCode?: string;
+  name: string | null;
+  lat: number;
+  lon: number;
+  capacity: number | null;
+  num_bikes_available: number;
+  mechanical: number;
+  ebike: number;
+  num_docks_available: number;
+  is_installed?: number;
+  is_renting?: number;
+  is_returning?: number;
+  distance?: number;
+  provider: 'velib';
+}
+
+// ── Map entity (discriminated union) ───────────────────────────────
+
+export type MapEntity = Bike | VelibStation;
 
 // ── Profile / Filters ───────────────────────────────────────────────
 

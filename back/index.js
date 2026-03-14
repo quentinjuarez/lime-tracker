@@ -81,7 +81,10 @@ const PROVIDERS = {
   },
 };
 
-const VALID_PROVIDERS = new Set(Object.keys(PROVIDERS));
+const VELIB_BASE =
+  'https://velib-metropole-opendata.smovengo.cloud/opendata/Velib_Metropole';
+
+const VALID_PROVIDERS = new Set([...Object.keys(PROVIDERS), 'velib']);
 
 // ── Health check ───────────────────────────────────────────────────
 
@@ -127,6 +130,73 @@ for (const [name, cfg] of Object.entries(PROVIDERS)) {
     }
   });
 }
+
+// ── Vélib stations (merged info + status) ─────────────────────────
+
+app.get('/velib/stations', async (_req, res) => {
+  const cached = getCache('velib_stations');
+  if (cached) return res.json(cached);
+
+  try {
+    // Cache station_information for 1 hour since it rarely changes
+    let infoData = getCache('velib_station_information');
+    if (!infoData) {
+      const r = await fetch(`${VELIB_BASE}/station_information.json`);
+      infoData = await r.json();
+      setCache('velib_station_information', infoData, 3600);
+    }
+
+    const statusRes = await fetch(`${VELIB_BASE}/station_status.json`);
+    const statusData = await statusRes.json();
+
+    // Build info lookup keyed by station_id (as string for safety)
+    const infoMap = new Map();
+    for (const s of infoData?.data?.stations ?? []) {
+      infoMap.set(String(s.station_id), s);
+    }
+
+    const stations = (statusData?.data?.stations ?? [])
+      .map((s) => {
+        const info = infoMap.get(String(s.station_id));
+        if (!info) return null;
+        const lat = Number(info.lat);
+        const lon = Number(info.lon);
+        if (isNaN(lat) || isNaN(lon)) return null;
+
+        const types = s.num_bikes_available_types ?? [];
+        const mechanical =
+          types.find((t) => t.mechanical != null)?.mechanical ?? 0;
+        const ebike = types.find((t) => t.ebike != null)?.ebike ?? 0;
+
+        return {
+          station_id: String(s.station_id),
+          stationCode: s.stationCode ?? info.stationCode,
+          name: info.name ?? null,
+          lat,
+          lon,
+          capacity: info.capacity ?? null,
+          num_bikes_available:
+            s.num_bikes_available ?? s.numBikesAvailable ?? 0,
+          mechanical,
+          ebike,
+          num_docks_available:
+            s.num_docks_available ?? s.numDocksAvailable ?? 0,
+          is_installed: s.is_installed,
+          is_renting: s.is_renting,
+          is_returning: s.is_returning,
+          last_reported: s.last_reported ?? null,
+        };
+      })
+      .filter(Boolean);
+
+    const result = { stations };
+    setCache('velib_stations', result, 30);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(502).json({ error: 'failed to fetch velib stations' });
+  }
+});
 
 // ── 404 handler ────────────────────────────────────────────────────
 

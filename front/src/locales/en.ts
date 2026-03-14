@@ -7,7 +7,7 @@ export default {
   },
   onboarding: {
     title: 'Bike Tracker',
-    subtitle: 'Find Lime, Voi or Dott vehicles near you.',
+    subtitle: 'Find Lime, Voi, Dott or Vélib vehicles near you.',
     useGps: 'Use my GPS location',
     locating: 'Locating…',
     or: 'or enter manually',

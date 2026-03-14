@@ -28,23 +28,40 @@
         }}</l-tooltip>
       </l-circle-marker>
 
-      <!-- Bikes -->
+      <!-- Bikes & Stations -->
       <l-marker
-        v-for="bike in bikes"
-        :key="`${bike.provider}-${bike.bike_id}`"
-        :lat-lng="[bike.lat, bike.lon]"
-        :icon="bikeIcon(bike)"
+        v-for="entity in bikes"
+        :key="
+          entity.kind === 'bike'
+            ? `${entity.provider}-${entity.bike_id}`
+            : `${entity.provider}-${entity.station_id}`
+        "
+        :lat-lng="[entity.lat, entity.lon]"
+        :icon="entity.kind === 'bike' ? bikeIcon(entity) : stationIcon(entity)"
       >
         <l-tooltip
           :options="{ permanent: false, sticky: true, interactive: false }"
         >
-          <div class="text-xs">
-            <strong class="uppercase">{{ bike.provider }}</strong>
+          <!-- Free-floating bike tooltip -->
+          <div v-if="entity.kind === 'bike'" class="text-xs">
+            <strong class="uppercase">{{ entity.provider }}</strong>
             <br />
-            {{ formatDistance(bike.distance) }}<br />
-            <template v-if="bike.battery_percent != null">
-              {{ bike.battery_percent }}%
+            {{ formatDistance(entity.distance) }}<br />
+            <template v-if="entity.battery_percent != null">
+              {{ entity.battery_percent }}%
             </template>
+          </div>
+          <!-- Vélib station tooltip -->
+          <div v-else class="text-xs">
+            <strong class="uppercase">Vélib</strong>
+            <br />
+            <span v-if="entity.name">{{ entity.name }}<br /></span>
+            🚲 {{ entity.num_bikes_available }}
+            <span class="opacity-70">
+              (⚙ {{ entity.mechanical }} · ⚡ {{ entity.ebike }}) </span
+            ><br />
+            🅿 {{ entity.num_docks_available }}<br />
+            {{ formatDistance(entity.distance) }}
           </div>
         </l-tooltip>
       </l-marker>
@@ -75,6 +92,10 @@
         <span class="w-3 h-3 rounded-full inline-block bg-dott-brand"></span>
         Dott
       </div>
+      <div class="flex items-center gap-2">
+        <span class="w-3 h-3 rounded-full inline-block bg-velib-brand"></span>
+        Vélib
+      </div>
     </div>
   </div>
 </template>
@@ -91,11 +112,16 @@ import {
   LTooltip,
 } from '@vue-leaflet/vue-leaflet';
 import 'leaflet/dist/leaflet.css';
-import type { Bike, Provider } from '../composables/useBikes';
+import type {
+  Bike,
+  VelibStation,
+  MapEntity,
+  Provider,
+} from '../composables/useBikes';
 import { useTheme } from '../composables/useTheme';
 
 const props = defineProps<{
-  bikes: Bike[];
+  bikes: MapEntity[];
   userLat: number;
   userLng: number;
 }>();
@@ -131,10 +157,12 @@ const center = computed<[number, number]>(() => [props.userLat, props.userLng]);
 // --color-lime-brand: #04dd01;
 // --color-voi-brand: #f26a61;
 // --color-dott-brand: #00a8e8;
+// --color-velib-brand: #2584fd;
 const PROVIDER_HEX: Record<Provider, string> = {
   lime: '#04dd01',
   voi: '#f26a61',
   dott: '#00a8e8',
+  velib: '#2584fd',
 };
 
 function markerColor(provider: Provider): string {
@@ -181,6 +209,33 @@ function bikeIcon(bike: Bike): L.Icon {
     className: '',
     iconSize: [SIZE, SIZE],
     iconAnchor: [CX, CX],
+  }) as unknown as L.Icon;
+}
+
+function stationIcon(station: VelibStation): L.Icon {
+  const count = station.num_bikes_available;
+  const color = PROVIDER_HEX.velib;
+  const isDark = theme.value === 'dark';
+  const bgFill = isDark ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.85)';
+  const W = 34;
+  const H = 26;
+  const r = 4; // corner radius
+
+  // Opacity reduced if station is not renting / no bikes
+  const opacity = station.is_renting === 0 || count === 0 ? '0.45' : '1';
+
+  const svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" opacity="${opacity}">
+    <rect x="1" y="1" width="${W - 2}" height="${H - 2}" rx="${r}" fill="${bgFill}" stroke="${color}" stroke-width="2"/>
+    <text x="${W / 2}" y="${H / 2 + 4.5}" text-anchor="middle"
+      font-size="12" font-weight="700" fill="${color}"
+      font-family="SF Mono, Fira Code, Menlo, monospace">${count}</text>
+  </svg>`;
+
+  return L.divIcon({
+    html: svg,
+    className: '',
+    iconSize: [W, H],
+    iconAnchor: [W / 2, H / 2],
   }) as unknown as L.Icon;
 }
 

@@ -276,6 +276,7 @@ const allProviders: { id: Provider; colorClass: string }[] = [
   { id: 'lime', colorClass: 'text-lime-brand' },
   { id: 'voi', colorClass: 'text-voi-brand' },
   { id: 'dott', colorClass: 'text-dott-brand' },
+  { id: 'velib', colorClass: 'text-velib-brand' },
 ];
 
 // ── Draft (buffered until Save) ──────────────────────────────────────

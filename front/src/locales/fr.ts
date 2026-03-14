@@ -5,6 +5,12 @@ export default {
     gettingLocation: 'Récupération de la position…',
     nextRefresh: '↻ {n}s',
   },
+  install: {
+    title: 'Installer l’app',
+    subtitle: 'Accès rapide depuis votre écran d’accueil',
+    install: 'Installer',
+    later: 'Plus tard',
+  },
   onboarding: {
     title: 'Bike Tracker',
     subtitle:

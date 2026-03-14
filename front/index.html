@@ -1,37 +1,56 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
 
     <!-- Primary -->
     <title>Bike Tracker</title>
-    <meta name="description" content="Real-time map of nearby e-bikes." />
-    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Carte temps réel des vélos et trottinettes disponibles près de vous — Lime, Voi, Dott, Vélib."
+    />
+    <meta name="theme-color" content="#ffa500" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Bike Tracker – Find e-bikes near you" />
+    <meta
+      property="og:title"
+      content="Bike Tracker – Vélos &amp; trottinettes près de vous"
+    />
     <meta
       property="og:description"
-      content="Real-time map of nearby e-bikes."
+      content="Carte temps réel des vélos et trottinettes disponibles près de vous — Lime, Voi, Dott, Vélib."
     />
-    <meta property="og:image" content="/og-image.png" />
-    <meta property="og:url" content="/" />
+    <!-- <meta property="og:image" content="https://bike-tracker-front.vercel.app/og-image.png" /> -->
+    <meta property="og:url" content="https://bike-tracker-front.vercel.app" />
 
     <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Bike Tracker – Find e-bikes near you" />
+    <meta name="twitter:card" content="summary" />
+    <meta
+      name="twitter:title"
+      content="Bike Tracker – Vélos &amp; trottinettes près de vous"
+    />
     <meta
       name="twitter:description"
-      content="Real-time map of nearby e-bikes."
+      content="Carte temps réel des vélos et trottinettes disponibles près de vous — Lime, Voi, Dott, Vélib."
     />
-    <meta name="twitter:image" content="/og-image.png" />
+
+    <!-- iOS PWA -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Bike Tracker" />
 
     <!-- Favicon -->
     <link type="image/png" sizes="16x16" rel="icon" href="bike-16.png" />
     <link type="image/png" sizes="32x32" rel="icon" href="bike-32.png" />
-    <link type="image/png" sizes="96x96" rel="icon" href="bike-96.png" />
     <link type="image/png" sizes="72x72" rel="icon" href="bike-72.png" />
     <link type="image/png" sizes="96x96" rel="icon" href="bike-96.png" />
     <link
@@ -60,11 +79,19 @@
     />
     <meta name="msapplication-square70x70logo" content="bike-70.png" />
 
-    <!-- PWA -->
+    <!-- PWA manifest -->
     <link rel="manifest" href="/manifest.json" />
   </head>
   <body>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
+    <!-- Service Worker registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(() => {});
+        });
+      }
+    </script>
   </body>
 </html>

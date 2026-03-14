@@ -35,7 +35,7 @@
  *   https://maps.app.goo.gl/...  → not resolvable client-side
  *
  *  ── Plus codes / Open Location Codes ────────────────────────────
- *   (not supported – would need a geocoder)
+ *   (not supported - would need a geocoder)
  *
  * Returns `{ lat, lng }` or `null`.
  */

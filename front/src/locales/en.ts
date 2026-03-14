@@ -5,6 +5,12 @@ export default {
     gettingLocation: 'Getting your location…',
     nextRefresh: '↻ {n}s',
   },
+  install: {
+    title: 'Install the app',
+    subtitle: 'Quick access from your home screen',
+    install: 'Install',
+    later: 'Later',
+  },
   onboarding: {
     title: 'Bike Tracker',
     subtitle: 'Find Lime, Voi, Dott or Vélib vehicles near you.',

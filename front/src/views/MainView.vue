@@ -1,5 +1,5 @@
 <template>
-  <div class="relative w-dvw h-dvh overflow-hidden bg-black">
+  <div class="relative w-full h-dvh overflow-hidden bg-black flex flex-col">
     <!-- Onboarding: no position yet (and geo is loading) -->
     <OnboardingScreen v-if="!store.hasPosition && !geoLoading" />
 

@@ -78,12 +78,7 @@
     </l-map>
 
     <div
-      class="absolute bottom-4 left-4 text-xs px-3 py-2 rounded-lg z-1000 space-y-1 border"
-      :class="
-        theme === 'light'
-          ? 'bg-white/80 text-gray-800 border-gray-200'
-          : 'bg-black/70 text-white border-transparent'
-      "
+      class="absolute bottom-4 left-4 text-xs px-3 py-2 rounded-lg z-1000 space-y-1 border-none bg-black/10 backdrop-blur-sm"
     >
       <div class="flex items-center gap-2">
         <span class="w-3 h-3 rounded-full bg-led inline-block"></span>

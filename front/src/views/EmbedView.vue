@@ -3,10 +3,12 @@
     <!-- Missing params error -->
     <div
       v-if="missingParams"
-      class="flex items-center justify-center h-full text-led/80 font-mono text-sm"
+      class="flex items-center justify-center h-full text-accent-500 dark:text-accent-400 text-sm"
     >
       Missing required query params:
-      <code class="ml-2 text-led">?lat=…&lng=…</code>
+      <code class="ml-2 text-accent-500 dark:text-accent-400 font-mono"
+        >?lat=…&lng=…</code
+      >
     </div>
 
     <template v-else>

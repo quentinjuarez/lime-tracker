@@ -3,19 +3,18 @@
     <Transition name="fade">
       <div
         v-if="open"
-        class="fixed inset-0 bg-black/10 backdrop-blur-sm z-2000"
-        @click="save"
+        class="fixed inset-0 bg-accent-500/5 dark:bg-black/10 backdrop-blur-sm z-2000"
       />
     </Transition>
     <Transition name="slide">
       <div
         v-if="open"
-        class="fixed bottom-0 left-0 right-0 max-h-[85dvh] rounded-t-2xl border-t border-led/20 bg-black/95 z-2001 overflow-y-auto font-mono text-led md:top-0 md:bottom-auto md:left-auto md:right-0 md:h-full md:max-h-none md:w-xl md:rounded-none md:border-t-0 md:border-l"
+        class="fixed bottom-0 left-0 right-0 max-h-[85dvh] rounded-t-2xl border-t border-accent-100 dark:border-accent-900 bg-white dark:bg-black text-accent-700 dark:text-accent-300 z-2001 overflow-y-auto md:top-0 md:bottom-auto md:left-auto md:right-0 md:h-full md:max-h-none md:w-xl md:rounded-none md:border-t-0 md:border-l"
       >
         <div class="p-6 space-y-6">
           <!-- Header -->
           <div class="flex items-center justify-between">
-            <h2 class="text-lg font-bold uppercase tracking-widest glow-sm">
+            <h2 class="text-base font-semibold tracking-wide">
               {{ t('settings.title') }}
             </h2>
             <div class="flex items-center gap-2">
@@ -28,18 +27,23 @@
 
           <!-- ── Location ──────────────────────────────────────────── -->
           <section class="space-y-3">
-            <h3 class="text-xs uppercase tracking-widest text-led/80">
+            <h3
+              class="text-xs uppercase tracking-widest text-accent-500 font-medium"
+            >
               {{ t('settings.location') }}
             </h3>
 
             <!-- Current coords -->
-            <div v-if="store.hasPosition" class="text-xs text-led/60 font-mono">
+            <div
+              v-if="store.hasPosition"
+              class="text-xs text-accent-500 font-mono"
+            >
               {{ store.lat?.toFixed(5) }}, {{ store.lng?.toFixed(5) }}
-              <span class="ml-2 text-led/40">
+              <span class="ml-2 text-accent-300 dark:text-accent-700">
                 {{ store.locationMode === 'geo' ? '(GPS)' : '(manual)' }}
               </span>
             </div>
-            <div v-else class="text-xs text-led/40">
+            <div v-else class="text-xs text-accent-300 dark:text-accent-700">
               {{ t('settings.noPosition') }}
             </div>
 
@@ -65,7 +69,7 @@
 
             <!-- Manual input (toggle) -->
             <button
-              class="text-[11px] text-led/50 hover:text-led/80 transition-colors uppercase tracking-widest underline-offset-2 hover:underline"
+              class="text-[11px] text-accent-400 dark:text-accent-500 hover:text-accent-600 dark:hover:text-accent-300 transition-colors uppercase tracking-widest underline-offset-2 hover:underline"
               @click="showManualInput = !showManualInput"
             >
               {{
@@ -105,7 +109,9 @@
 
           <!-- ── Providers ─────────────────────────────────────────── -->
           <section class="space-y-2">
-            <h3 class="text-xs uppercase tracking-widest text-led/80">
+            <h3
+              class="text-xs uppercase tracking-widest text-accent-500 font-medium"
+            >
               {{ t('settings.providers') }}
             </h3>
             <label
@@ -116,7 +122,7 @@
               <input
                 type="checkbox"
                 :checked="draft.providers.includes(p.id)"
-                class="accent-led"
+                class="accent-accent"
                 @change="toggleDraftProvider(p.id)"
               />
               <span class="text-sm font-bold uppercase" :class="p.colorClass">
@@ -127,7 +133,9 @@
 
           <!-- ── Filters ───────────────────────────────────────────── -->
           <section class="space-y-4">
-            <h3 class="text-xs uppercase tracking-widest text-led/80">
+            <h3
+              class="text-xs uppercase tracking-widest text-accent-500 font-medium"
+            >
               {{ t('settings.filters') }}
             </h3>
 
@@ -173,7 +181,9 @@
 
           <!-- Language -->
           <section class="space-y-2">
-            <h3 class="text-xs uppercase tracking-widest text-led/80">
+            <h3
+              class="text-xs uppercase tracking-widest text-accent-500 font-medium"
+            >
               {{ t('settings.language') }}
             </h3>
             <LanguageSwitcher />

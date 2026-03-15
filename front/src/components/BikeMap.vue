@@ -18,7 +18,7 @@
         :lat-lng="[props.userLat, props.userLng]"
         :icon="
           createCircularIcon({
-            color: 'var(--color-led)',
+            color: 'var(--color-accent)',
             isDark: theme === 'dark',
             size: 26,
             radius: 10,
@@ -78,10 +78,12 @@
     </l-map>
 
     <div
-      class="absolute bottom-4 left-4 text-xs px-3 py-2 rounded-lg z-1000 space-y-1 border-none bg-black/10 backdrop-blur-sm"
+      class="absolute bottom-4 left-4 text-accent-600 dark:text-accent-400 text-xs px-3 py-2 rounded-xl z-1000 space-y-1 bg-accent-500/5 dark:bg-black/10 backdrop-blur-sm shadow-sm"
     >
       <div class="flex items-center gap-2">
-        <span class="w-3 h-3 rounded-full bg-led inline-block"></span>
+        <span
+          class="w-3 h-3 rounded-full bg-accent-500 dark:bg-accent-400 inline-block"
+        ></span>
         {{ t('bikeMap.me') }}
       </div>
       <div class="flex items-center gap-2">
@@ -218,7 +220,7 @@ function createCircularIcon(options: {
     const yOffset = CX + fontSize * 0.35;
     centerElement += `<text x="${CX}" y="${yOffset}" text-anchor="middle"
       font-size="${fontSize}" font-weight="700" fill="#ffffff"
-      font-family="SF Mono, Fira Code, Menlo, monospace">${text}</text>`;
+      font-family="system-ui, sans-serif">${text}</text>`;
   }
 
   const svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg" opacity="${opacity}">
@@ -280,21 +282,17 @@ function formatDistance(m?: number) {
 <style scoped>
 /* Leaflet zoom controls */
 :deep(.leaflet-control-zoom) {
-  border: 1px solid color-mix(in srgb, var(--color-led) 30%, transparent) !important;
-  border-radius: 8px !important;
+  border: 1px solid var(--leaflet-ctrl-border) !important;
+  border-radius: 10px !important;
   overflow: hidden;
   background: transparent !important;
 }
 
 :deep(.leaflet-control-zoom a) {
-  background: rgba(0, 0, 0, 0.8) !important;
-  color: var(--color-led) !important;
-  border-color: color-mix(
-    in srgb,
-    var(--color-led) 20%,
-    transparent
-  ) !important;
-  font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace !important;
+  background: var(--leaflet-ctrl-bg) !important;
+  color: var(--leaflet-ctrl-color) !important;
+  border-color: var(--leaflet-ctrl-border) !important;
+  font-family: system-ui, sans-serif !important;
   font-size: 16px !important;
   width: 32px !important;
   height: 32px !important;
@@ -306,98 +304,53 @@ function formatDistance(m?: number) {
 }
 
 :deep(.leaflet-control-zoom a:hover) {
-  background: color-mix(in srgb, var(--color-led) 15%, transparent) !important;
-  color: color-mix(in srgb, var(--color-led) 85%, white) !important;
+  background: var(--leaflet-ctrl-hover) !important;
+  color: var(--color-accent) !important;
 }
 
 :deep(.leaflet-control-zoom a.leaflet-disabled) {
-  background: rgba(0, 0, 0, 0.6) !important;
-  color: color-mix(in srgb, var(--color-led) 30%, transparent) !important;
+  color: var(--leaflet-ctrl-disabled) !important;
+  opacity: 0.6;
 }
 
 /* Attribution */
 :deep(.leaflet-control-attribution) {
-  background: rgba(0, 0, 0, 0.7) !important;
-  color: color-mix(in srgb, var(--color-led) 50%, transparent) !important;
-  font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace !important;
+  background: var(--leaflet-attr-bg) !important;
+  color: var(--leaflet-attr-color) !important;
+  font-family: system-ui, sans-serif !important;
   font-size: 9px !important;
   padding: 2px 8px !important;
   border-radius: 4px 0 0 0 !important;
   backdrop-filter: blur(8px);
 }
 
-/* Tooltip */
-:deep(.leaflet-tooltip) {
-  background: rgba(0, 0, 0, 0.85) !important;
-  border: 1px solid color-mix(in srgb, var(--color-led) 30%, transparent) !important;
-  color: var(--color-led) !important;
-  font-family: 'SF Mono', 'Fira Code', 'Menlo', monospace !important;
-  font-size: 11px !important;
-  border-radius: 6px !important;
-  padding: 6px 10px !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
-}
-
-:deep(.leaflet-control-attribution a) {
-  display: none !important;
-}
-
+:deep(.leaflet-control-attribution a),
 :deep(.leaflet-control-attribution span) {
   display: none !important;
 }
 
-:deep(.leaflet-control-attribution a:hover) {
-  color: var(--color-led) !important;
+/* Tooltip */
+:deep(.leaflet-tooltip) {
+  background: var(--leaflet-tip-bg) !important;
+  border: 1px solid var(--leaflet-tip-border) !important;
+  color: var(--leaflet-tip-color) !important;
+  font-family: system-ui, sans-serif !important;
+  font-size: 11px !important;
+  border-radius: 8px !important;
+  padding: 6px 10px !important;
+  box-shadow: 0 4px 16px var(--leaflet-tip-shadow) !important;
 }
 
 :deep(.leaflet-tooltip-top::before) {
-  border-top-color: rgba(0, 0, 0, 0.85) !important;
+  border-top-color: var(--leaflet-tip-arrow) !important;
 }
 :deep(.leaflet-tooltip-bottom::before) {
-  border-bottom-color: rgba(0, 0, 0, 0.85) !important;
+  border-bottom-color: var(--leaflet-tip-arrow) !important;
 }
 :deep(.leaflet-tooltip-left::before) {
-  border-left-color: rgba(0, 0, 0, 0.85) !important;
+  border-left-color: var(--leaflet-tip-arrow) !important;
 }
 :deep(.leaflet-tooltip-right::before) {
-  border-right-color: rgba(0, 0, 0, 0.85) !important;
-}
-</style>
-
-<style>
-/* ── Light mode overrides for Leaflet controls ─────────────────── */
-html.light .leaflet-control-zoom a {
-  background: rgba(255, 255, 255, 0.9) !important;
-  color: #1a1a1a !important;
-  border-color: rgba(0, 0, 0, 0.15) !important;
-}
-html.light .leaflet-control-zoom a:hover {
-  background: rgba(0, 0, 0, 0.06) !important;
-}
-html.light .leaflet-control-zoom a.leaflet-disabled {
-  background: rgba(255, 255, 255, 0.6) !important;
-  color: rgba(0, 0, 0, 0.3) !important;
-}
-html.light .leaflet-control-attribution {
-  background: rgba(255, 255, 255, 0.8) !important;
-  color: rgba(0, 0, 0, 0.5) !important;
-}
-html.light .leaflet-tooltip {
-  background: rgba(255, 255, 255, 0.95) !important;
-  border: 1px solid rgba(0, 0, 0, 0.12) !important;
-  color: #1a1a1a !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
-}
-html.light .leaflet-tooltip-top::before {
-  border-top-color: rgba(255, 255, 255, 0.95) !important;
-}
-html.light .leaflet-tooltip-bottom::before {
-  border-bottom-color: rgba(255, 255, 255, 0.95) !important;
-}
-html.light .leaflet-tooltip-left::before {
-  border-left-color: rgba(255, 255, 255, 0.95) !important;
-}
-html.light .leaflet-tooltip-right::before {
-  border-right-color: rgba(255, 255, 255, 0.95) !important;
+  border-right-color: var(--leaflet-tip-arrow) !important;
 }
 </style>

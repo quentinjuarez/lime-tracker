@@ -7,7 +7,9 @@
     </BaseButton>
     <div v-if="geoError" class="text-red-400 text-xs">{{ geoError }}</div>
 
-    <div class="text-led/80 text-[11px] text-center uppercase tracking-widest">
+    <div
+      class="text-accent-300 dark:text-accent-600 text-[11px] text-center uppercase tracking-widest"
+    >
       or
     </div>
 
@@ -33,9 +35,9 @@
     >
       Confirm location
     </BaseButton>
-    <details class="text-led/60 text-[11px]">
+    <details class="text-accent-300 dark:text-accent-600 text-[11px]">
       <summary
-        class="cursor-pointer hover:text-led transition-colors tracking-widest"
+        class="cursor-pointer hover:text-accent-600 dark:hover:text-accent-400 transition-colors tracking-widest"
       >
         Supported formats
       </summary>

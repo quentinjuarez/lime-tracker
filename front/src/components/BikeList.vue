@@ -3,21 +3,23 @@
     <Transition name="fade">
       <div
         v-if="open"
-        class="fixed inset-0 bg-black/10 backdrop-blur-sm z-2000"
-        @click="emit('close')"
+        class="fixed inset-0 bg-accent-500/5 dark:bg-black/10 backdrop-blur-sm z-2000"
+        @click.self="emit('close')"
       />
     </Transition>
     <Transition name="modal">
       <div
         v-if="open"
-        class="fixed bottom-0 left-0 right-0 max-h-[85dvh] rounded-t-2xl border-t border-led/20 bg-black/95 z-2001 overflow-y-auto font-mono text-led md:bottom-auto md:left-1/2 md:-translate-x-1/2 md:top-1/2 md:-translate-y-1/2 md:h-auto md:max-h-[80dvh] md:w-[640px] md:rounded-2xl md:border"
+        class="fixed bottom-0 left-0 right-0 max-h-[85dvh] rounded-t-2xl border-t border-accent-100 dark:border-accent-900 bg-white dark:bg-black text-accent-700 dark:text-accent-300 z-2001 overflow-y-auto md:bottom-auto md:left-1/2 md:-translate-x-1/2 md:top-1/2 md:-translate-y-1/2 md:h-auto md:max-h-[80dvh] md:w-[640px] md:rounded-2xl md:border"
       >
-        <div class="p-6 space-y-4">
+        <div class="p-6">
           <!-- Header -->
-          <div class="flex items-center justify-between">
-            <h2 class="text-lg font-bold uppercase tracking-widest glow-sm">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-base font-semibold tracking-wide">
               {{ t('bikeList.title') }}
-              <span class="text-led/60 text-sm font-normal ml-2">
+              <span
+                class="text-accent-400 dark:text-accent-500 text-sm font-normal ml-2"
+              >
                 {{ bikes.length }}
               </span>
             </h2>
@@ -33,27 +35,26 @@
 
           <!-- Header row -->
           <div
-            class="grid grid-cols-[80px_1fr_60px_100px] gap-2 px-4 py-2 border-b border-led/30 text-led/80 text-[11px] uppercase tracking-widest"
+            class="grid grid-cols-[1fr_60px_100px] gap-2 px-4 py-2 border-b border-accent-100 dark:border-accent-900 text-accent-400 dark:text-accent-600 text-[11px] uppercase tracking-widest font-mono"
           >
-            <span class="glow-sm">{{ t('bikeList.provider') }}</span>
-            <span class="text-right glow-sm">{{ t('bikeList.battery') }}</span>
-            <span class="text-right glow-sm">{{ t('bikeList.distance') }}</span>
+            <span>{{ t('bikeList.provider') }}</span>
+            <span class="text-right">{{ t('bikeList.battery') }}</span>
+            <span class="text-right">{{ t('bikeList.distance') }}</span>
           </div>
 
           <!-- Rows -->
           <div
-            v-for="(entity, i) in bikes"
+            v-for="entity in bikes"
             :key="
               entity.kind === 'bike'
                 ? `${entity.provider}-${entity.bike_id}`
                 : `${entity.provider}-${entity.station_id}`
             "
-            class="grid grid-cols-[80px_1fr_60px_100px] gap-2 items-center px-4 py-2 border-b border-led/30"
-            :class="i % 2 === 0 ? 'bg-black' : 'bg-led/0'"
+            class="grid grid-cols-[1fr_60px_100px] gap-2 items-center px-4 py-3 border-b border-accent-100 dark:border-accent-900 transition-colors hover:bg-accent-50 dark:hover:bg-accent-950"
           >
             <!-- Provider pill -->
             <span
-              class="text-sm font-bold uppercase tracking-wide glow"
+              class="text-sm font-bold uppercase tracking-wide"
               :class="{
                 'text-lime-brand': entity.provider === 'lime',
                 'text-voi-brand': entity.provider === 'voi',
@@ -67,7 +68,7 @@
             <!-- Battery / Available bikes -->
             <span
               v-if="entity.kind === 'bike'"
-              class="text-right text-sm font-bold tracking-wide glow"
+              class="text-right text-sm font-bold font-mono"
               :class="batteryColor(entity.battery_percent)"
             >
               {{
@@ -78,7 +79,7 @@
             </span>
             <span
               v-else
-              class="text-right text-sm font-bold tracking-wide glow text-velib-brand"
+              class="text-right text-sm font-bold font-mono text-velib-brand"
               :title="`${entity.num_docks_available} docks libres`"
             >
               {{ entity.num_bikes_available }}
@@ -86,7 +87,7 @@
 
             <!-- Distance -->
             <span
-              class="text-right text-led text-sm font-bold tracking-wide glow"
+              class="text-right text-accent-600 dark:text-accent-400 text-sm font-mono"
             >
               {{ formatDistance(entity.distance) }}
             </span>
@@ -95,7 +96,7 @@
           <!-- Empty state -->
           <div
             v-if="!bikes.length"
-            class="text-center text-led/50 text-sm py-8 tracking-widest uppercase"
+            class="text-center text-accent-300 dark:text-accent-600 text-sm py-10 tracking-wide"
           >
             {{ t('bikeList.noVehicles') }}
           </div>
@@ -126,7 +127,7 @@ function formatDistance(m?: number) {
 }
 
 function batteryColor(pct?: number): string {
-  if (pct == null) return 'text-led/40';
+  if (pct == null) return 'text-accent-300 dark:text-accent-600';
   if (pct >= 60) return 'text-green-400';
   if (pct >= 30) return 'text-yellow-400';
   return 'text-red-400';

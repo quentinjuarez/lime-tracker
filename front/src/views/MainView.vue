@@ -1,5 +1,7 @@
 <template>
-  <div class="relative w-full h-dvh overflow-hidden bg-black flex flex-col">
+  <div
+    class="relative w-full h-dvh overflow-hidden bg-[#fafaf9] dark:bg-[#0c0c14] flex flex-col"
+  >
     <!-- Onboarding: no position yet (and geo is loading) -->
     <OnboardingScreen v-if="!store.hasPosition && !geoLoading" />
 
@@ -24,7 +26,7 @@
       <!-- Initial geo loading screen -->
       <div
         v-if="geoLoading && !store.hasPosition"
-        class="flex items-center justify-center h-full gap-3 text-led font-mono text-sm"
+        class="flex items-center justify-center h-full gap-3 text-accent-600 dark:text-accent-400 text-sm"
       >
         <SpinnerIcon size="lg" />
         <span>{{ t('main.gettingLocation') }}</span>
@@ -33,7 +35,7 @@
       <!-- Geo error on first load (no position yet) -->
       <div
         v-if="geoError && !store.hasPosition"
-        class="flex flex-col items-center justify-center h-full gap-4 text-led font-mono px-6"
+        class="flex flex-col items-center justify-center h-full gap-4 text-accent-600 dark:text-accent-400 px-6"
       >
         <p class="text-red-400 text-sm text-center">{{ geoError }}</p>
         <OnboardingScreen />
@@ -50,7 +52,7 @@
           {{ t('main.settings') }}
         </BaseButton>
         <div
-          class="min-w-16 flex justify-center items-center backdrop-blur-sm bg-black/10 text-led text-xs font-mono px-3 py-1.5 rounded-lg border border-led/80"
+          class="min-w-16 flex justify-center items-center backdrop-blur-sm bg-accent-500/5 dark:bg-black/10 text-accent-600 dark:text-accent-400 text-xs font-mono px-3 py-1.5 rounded-xl border border-accent-200 dark:border-accent-700"
         >
           <SpinnerIcon v-if="loading" size="sm" />
           <span v-if="!loading" class="flex-none">{{

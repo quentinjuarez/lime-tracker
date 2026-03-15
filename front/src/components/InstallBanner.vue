@@ -2,16 +2,18 @@
   <Transition name="slide-up">
     <div v-if="showBanner" class="fixed bottom-4 inset-x-0 z-1100 p-4">
       <div
-        class="max-w-sm mx-auto bg-black/10 border border-led/30 rounded-xl px-4 py-3 shadow-2xl backdrop-blur-sm flex flex-col md:flex-row md:items-center gap-3"
+        class="max-w-sm mx-auto bg-accent-500/5 dark:bg-black/10 border border-accent-100 dark:border-accent-900 rounded-2xl px-4 py-3 shadow-xl backdrop-blur-sm flex flex-col md:flex-row md:items-center gap-3"
       >
         <!-- Text -->
         <div class="flex-1 min-w-0">
           <p
-            class="text-xs font-mono font-bold text-led uppercase tracking-widest truncate"
+            class="text-xs font-semibold text-accent-700 dark:text-accent-300 tracking-wide truncate"
           >
             {{ t('install.title') }}
           </p>
-          <p class="text-[10px] font-mono text-led/60 leading-tight mt-0.5">
+          <p
+            class="text-[10px] text-accent-400 dark:text-accent-500 leading-tight mt-0.5"
+          >
             {{ t('install.subtitle') }}
           </p>
         </div>

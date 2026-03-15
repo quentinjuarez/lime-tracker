@@ -1,9 +1,9 @@
 <template>
-  <div class="min-h-dvh bg-black text-led font-mono overflow-y-auto">
+  <div class="min-h-dvh bg-[#fafaf9] dark:bg-[#0c0c14] text-accent-700 dark:text-accent-300 overflow-y-auto">
     <div class="max-w-2xl mx-auto px-6 py-10 space-y-8">
       <RouterLink
         to="/"
-        class="inline-flex items-center gap-2 text-xs text-led/50 hover:text-led transition-colors uppercase tracking-widest"
+        class="inline-flex items-center gap-2 text-xs text-accent-400 dark:text-accent-500 hover:text-accent-700 dark:hover:text-accent-300 transition-colors uppercase tracking-widest"
       >
         {{ t('legal.back') }}
       </RouterLink>
@@ -13,30 +13,34 @@
       <h1 class="text-2xl font-bold uppercase tracking-widest">
         {{ t('legalNotice.title') }}
       </h1>
-      <p class="text-xs text-led/55">
+      <p class="text-xs text-accent-400 dark:text-accent-500">
         {{ t('legalNotice.updatedAt', { date: lastUpdated }) }}
       </p>
 
       <!-- 1. Publisher -->
       <section class="space-y-2">
-        <h2 class="text-sm font-bold uppercase tracking-widest text-led/90">
+        <h2 class="text-sm font-bold uppercase tracking-widest text-accent-700 dark:text-accent-300">
           {{ t('legalNotice.s1.title') }}
         </h2>
-        <p class="text-sm text-led/80 leading-relaxed">
+        <p class="text-sm text-accent-600 dark:text-accent-400 leading-relaxed">
           {{ t('legalNotice.s1.publishedBy') }}<br />
-          <span class="text-led/40">{{ t('legalNotice.s1.nameLabel') }}</span>
+          <span class="text-accent-300 dark:text-accent-600">{{
+            t('legalNotice.s1.nameLabel')
+          }}</span>
           {{ ownerName }}<br />
-          <span class="text-led/40">{{ t('legalNotice.s1.emailLabel') }}</span>
+          <span class="text-accent-300 dark:text-accent-600">{{
+            t('legalNotice.s1.emailLabel')
+          }}</span>
           {{ ownerEmail }}
         </p>
       </section>
 
       <!-- 2. Hosting -->
       <section class="space-y-2">
-        <h2 class="text-sm font-bold uppercase tracking-widest text-led/90">
+        <h2 class="text-sm font-bold uppercase tracking-widest text-accent-700 dark:text-accent-300">
           {{ t('legalNotice.s2.title') }}
         </h2>
-        <p class="text-sm text-led/80 leading-relaxed">
+        <p class="text-sm text-accent-600 dark:text-accent-400 leading-relaxed">
           {{ t('legalNotice.s2.hostedBy') }}<br />
           {{ hostingName }}<br />
           {{ hostingAddress }}
@@ -45,20 +49,20 @@
 
       <!-- 3. Purpose -->
       <section class="space-y-2">
-        <h2 class="text-sm font-bold uppercase tracking-widest text-led/90">
+        <h2 class="text-sm font-bold uppercase tracking-widest text-accent-700 dark:text-accent-300">
           {{ t('legalNotice.s3.title') }}
         </h2>
-        <p class="text-sm text-led/80 leading-relaxed">
+        <p class="text-sm text-accent-600 dark:text-accent-400 leading-relaxed">
           {{ t('legalNotice.s3.content') }}
         </p>
       </section>
 
       <!-- 4. As Is -->
       <section class="space-y-2">
-        <h2 class="text-sm font-bold uppercase tracking-widest text-led/90">
+        <h2 class="text-sm font-bold uppercase tracking-widest text-accent-700 dark:text-accent-300">
           {{ t('legalNotice.s4.title') }}
         </h2>
-        <p class="text-sm text-led/80 leading-relaxed">
+        <p class="text-sm text-accent-600 dark:text-accent-400 leading-relaxed">
           <I18nT keypath="legalNotice.s4.intro" tag="span">
             <template #asIs>
               <strong>{{ t('legalNotice.s4.asIs') }}</strong>
@@ -67,65 +71,65 @@
         </p>
         <p
           v-if="t('legalNotice.s4.bullets')"
-          class="text-sm text-led/80 leading-relaxed whitespace-pre-line"
+          class="text-sm text-accent-600 dark:text-accent-400 leading-relaxed whitespace-pre-line"
         >
           {{ t('legalNotice.s4.bullets') }}
         </p>
-        <p class="text-sm text-led/80 leading-relaxed">
+        <p class="text-sm text-accent-600 dark:text-accent-400 leading-relaxed">
           {{ t('legalNotice.s4.closing') }}
         </p>
       </section>
 
       <!-- 5. Third-party data -->
       <section class="space-y-2">
-        <h2 class="text-sm font-bold uppercase tracking-widest text-led/90">
+        <h2 class="text-sm font-bold uppercase tracking-widest text-accent-700 dark:text-accent-300">
           {{ t('legalNotice.s5.title') }}
         </h2>
-        <p class="text-sm text-led/80 leading-relaxed">
+        <p class="text-sm text-accent-600 dark:text-accent-400 leading-relaxed">
           <I18nT keypath="legalNotice.s5.intro" tag="span">
             <template #thirdParty>
               <strong>{{ t('legalNotice.s5.thirdParty') }}</strong>
             </template>
           </I18nT>
         </p>
-        <p class="text-sm text-led/80 leading-relaxed">
+        <p class="text-sm text-accent-600 dark:text-accent-400 leading-relaxed">
           {{ t('legalNotice.s5.content') }}
         </p>
       </section>
 
       <!-- 6. Non-commercial -->
       <section class="space-y-2">
-        <h2 class="text-sm font-bold uppercase tracking-widest text-led/90">
+        <h2 class="text-sm font-bold uppercase tracking-widest text-accent-700 dark:text-accent-300">
           {{ t('legalNotice.s6.title') }}
         </h2>
-        <p class="text-sm text-led/80 leading-relaxed">
+        <p class="text-sm text-accent-600 dark:text-accent-400 leading-relaxed">
           <I18nT keypath="legalNotice.s6.intro" tag="span">
             <template #strictlyPersonal>
               <strong>{{ t('legalNotice.s6.strictlyPersonal') }}</strong>
             </template>
           </I18nT>
         </p>
-        <p class="text-sm text-led/80 leading-relaxed">
+        <p class="text-sm text-accent-600 dark:text-accent-400 leading-relaxed">
           {{ t('legalNotice.s6.content') }}
         </p>
       </section>
 
       <!-- 7. Intellectual property -->
       <section class="space-y-2">
-        <h2 class="text-sm font-bold uppercase tracking-widest text-led/90">
+        <h2 class="text-sm font-bold uppercase tracking-widest text-accent-700 dark:text-accent-300">
           {{ t('legalNotice.s7.title') }}
         </h2>
-        <p class="text-sm text-led/80 leading-relaxed">
+        <p class="text-sm text-accent-600 dark:text-accent-400 leading-relaxed">
           {{ t('legalNotice.s7.content') }}
         </p>
       </section>
 
       <!-- 8. Law -->
       <section class="space-y-2">
-        <h2 class="text-sm font-bold uppercase tracking-widest text-led/90">
+        <h2 class="text-sm font-bold uppercase tracking-widest text-accent-700 dark:text-accent-300">
           {{ t('legalNotice.s8.title') }}
         </h2>
-        <p class="text-sm text-led/80 leading-relaxed">
+        <p class="text-sm text-accent-600 dark:text-accent-400 leading-relaxed">
           {{ t('legalNotice.s8.content') }}
         </p>
       </section>

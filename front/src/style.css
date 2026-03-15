@@ -1,106 +1,113 @@
 @import 'tailwindcss';
 
+/* ── Class-based dark mode ─────────────────────────────────────────── */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ── Color tokens ──────────────────────────────────────────────────── */
 @theme {
   --color-lime-brand: #04dd01;
   --color-voi-brand: #f26a61;
   --color-dott-brand: #00a8e8;
   --color-velib-brand: #2584fd;
-  --color-led: #ffa500;
+
+  /* Accent scale — violet */
+  --color-accent-50: #f5f3ff;
+  --color-accent-100: #ede9fe;
+  --color-accent-200: #ddd6fe;
+  --color-accent-300: #c4b5fd;
+  --color-accent-400: #a78bfa;
+  --color-accent-500: #8b5cf6;
+  --color-accent-600: #7c3aed;
+  --color-accent-700: #6d28d9;
+  --color-accent-800: #5b21b6;
+  --color-accent-900: #4c1d95;
+  --color-accent-950: #2e1065;
 }
 
-@utility glow-sm {
-  text-shadow: 0 0 4px currentColor;
+/* ── Light mode defaults ───────────────────────────────────────────── */
+:root {
+  color-scheme: light;
+  /* Alias used by BikeMap JS (var(--color-accent)) */
+  --color-accent: var(--color-accent-600);
+  /* Slider tokens */
+  --slider-track: var(--color-accent-200);
+  --slider-thumb: var(--color-accent-600);
+  --slider-ring: var(--color-accent-100);
+  /* Scrollbar */
+  --scrollbar-bg: #f0eeff;
+  --scrollbar-thumb: rgba(109, 40, 217, 0.15);
+  --scrollbar-thumb-hover: rgba(109, 40, 217, 0.3);
+  /* Leaflet UI */
+  --leaflet-ctrl-bg: rgba(255, 255, 255, 0.92);
+  --leaflet-ctrl-color: var(--color-accent-600);
+  --leaflet-ctrl-border: var(--color-accent-200);
+  --leaflet-ctrl-hover: var(--color-accent-50);
+  --leaflet-ctrl-disabled: var(--color-accent-300);
+  --leaflet-attr-bg: rgba(255, 255, 255, 0.82);
+  --leaflet-attr-color: var(--color-accent-400);
+  --leaflet-tip-bg: rgba(255, 255, 255, 0.97);
+  --leaflet-tip-border: var(--color-accent-200);
+  --leaflet-tip-color: var(--color-accent-700);
+  --leaflet-tip-arrow: rgba(255, 255, 255, 0.97);
+  --leaflet-tip-shadow: rgba(0, 0, 0, 0.1);
 }
 
-@utility glow {
-  text-shadow:
-    0 0 6px currentColor,
-    0 0 12px currentColor;
+/* ── Dark mode overrides ───────────────────────────────────────────── */
+.dark {
+  color-scheme: dark;
+  --color-accent: var(--color-accent-400);
+  --slider-track: var(--color-accent-800);
+  --slider-thumb: var(--color-accent-400);
+  --slider-ring: var(--color-accent-900);
+  --scrollbar-bg: #0c0c14;
+  --scrollbar-thumb: rgba(167, 139, 250, 0.2);
+  --scrollbar-thumb-hover: rgba(167, 139, 250, 0.4);
+  /* Leaflet UI */
+  --leaflet-ctrl-bg: rgba(0, 0, 0, 0.75);
+  --leaflet-ctrl-color: var(--color-accent-400);
+  --leaflet-ctrl-border: var(--color-accent-800);
+  --leaflet-ctrl-hover: rgba(0, 0, 0, 0.4);
+  --leaflet-ctrl-disabled: var(--color-accent-700);
+  --leaflet-attr-bg: rgba(0, 0, 0, 0.65);
+  --leaflet-attr-color: var(--color-accent-600);
+  --leaflet-tip-bg: rgba(0, 0, 0, 0.88);
+  --leaflet-tip-border: var(--color-accent-800);
+  --leaflet-tip-color: var(--color-accent-400);
+  --leaflet-tip-arrow: rgba(0, 0, 0, 0.88);
+  --leaflet-tip-shadow: rgba(0, 0, 0, 0.5);
 }
 
-@utility glow-lg {
-  text-shadow:
-    0 0 8px currentColor,
-    0 0 16px currentColor,
-    0 0 32px currentColor;
-}
-
+/* ── Base ──────────────────────────────────────────────────────────── */
 html,
 body,
 #app {
   height: 100%;
   margin: 0;
-  background: #000;
-  color: var(--color-led);
-  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Menlo', monospace;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
 }
 
-/* Scrollbar dark theme */
+/* ── Scrollbar ─────────────────────────────────────────────────────── */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0a0a0a;
+  background: var(--scrollbar-bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: color-mix(in srgb, var(--color-led) 20%, transparent);
+  background: var(--scrollbar-thumb);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: color-mix(in srgb, var(--color-led) 40%, transparent);
+  background: var(--scrollbar-thumb-hover);
 }
 
-/* ── Light mode ─────────────────────────────────────────────────── */
-html.light {
-  --color-led: #834800;
-  color-scheme: light;
-}
-
-html.light,
-html.light body,
-html.light #app {
-  background: #f5f5f0;
-  color: #1a1a1a;
-}
-
-/* Surfaces */
-html.light .bg-black {
-  background-color: #f5f5f0 !important;
-}
-html.light .bg-black\/10 {
-  background-color: rgba(0, 0, 0, 0.04) !important;
-}
-html.light .bg-black\/95 {
-  background-color: rgba(245, 245, 240, 0.97) !important;
-}
-html.light .bg-black\/0 {
-  background-color: transparent !important;
-}
-
-/* Primary button: bg-led is now dark, so flip text to light */
-html.light .bg-led.text-black {
-  color: #f5f5f0 !important;
-}
-
-/* Suppress glow effects on light backgrounds */
-html.light .glow-sm,
-html.light .glow,
-html.light .glow-lg {
-  text-shadow: none;
-}
-
-/* Scrollbar light theme */
-html.light ::-webkit-scrollbar-track {
-  background: #e8e8e0;
-}
-html.light ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.15);
-}
-html.light ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.3);
-}
-
+/* ── Transitions ───────────────────────────────────────────────────── */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.2s ease;

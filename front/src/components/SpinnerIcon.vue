@@ -10,7 +10,7 @@ withDefaults(
 <template>
   <svg
     :class="[
-      'animate-spin text-led',
+      'animate-spin text-accent-600 dark:text-accent-400',
       {
         'h-4 w-4': size === 'sm',
         'h-6 w-6': size === 'md',

@@ -1,18 +1,20 @@
 <template>
-  <div class="pt-4 border-t border-led/20 text-center">
+  <div
+    class="pt-4 border-t border-accent-100 dark:border-accent-900 text-center"
+  >
     <p
-      class="text-[10px] text-led/60 uppercase tracking-widest font-mono space-x-2"
+      class="text-[10px] text-accent-400 dark:text-accent-500 uppercase tracking-widest space-x-2"
     >
       <RouterLink
         to="/legal"
-        class="hover:text-led/80 transition-colors underline-offset-2 underline"
+        class="hover:text-accent-700 dark:hover:text-accent-300 transition-colors underline-offset-2 underline"
       >
         {{ t('footer.legal') }}
       </RouterLink>
       <span>·</span>
       <RouterLink
         to="/privacy"
-        class="hover:text-led/80 transition-colors underline-offset-2 underline"
+        class="hover:text-accent-700 dark:hover:text-accent-300 transition-colors underline-offset-2 underline"
       >
         {{ t('footer.privacy') }}
       </RouterLink>

@@ -1,11 +1,13 @@
 <template>
   <div
-    class="flex flex-col items-center justify-center h-full gap-6 text-led font-mono px-6"
+    class="flex flex-col items-center justify-center h-full gap-6 text-accent-700 dark:text-accent-300 px-6"
   >
-    <h1 class="text-2xl font-bold uppercase tracking-widest glow-sm">
+    <h1 class="text-2xl font-semibold tracking-wide">
       {{ t('onboarding.title') }}
     </h1>
-    <p class="text-led/80 text-sm text-center max-w-sm">
+    <p
+      class="text-accent-500 dark:text-accent-400 text-sm text-center max-w-sm"
+    >
       {{ t('onboarding.subtitle') }}
     </p>
 
@@ -26,11 +28,11 @@
 
       <!-- Separator -->
       <div
-        class="flex items-center gap-3 text-led/60 text-[11px] uppercase tracking-widest"
+        class="flex items-center gap-3 text-accent-300 dark:text-accent-600 text-[11px] uppercase tracking-widest"
       >
-        <span class="flex-1 h-px bg-led/20" />
+        <span class="flex-1 h-px bg-accent-100 dark:bg-accent-900" />
         {{ t('onboarding.or') }}
-        <span class="flex-1 h-px bg-led/20" />
+        <span class="flex-1 h-px bg-accent-100 dark:bg-accent-900" />
       </div>
 
       <!-- Secondary: manual input -->
@@ -57,9 +59,9 @@
         {{ t('onboarding.confirmLocation') }}
       </BaseButton>
 
-      <details class="text-led/60 text-[11px]">
+      <details class="text-accent-300 dark:text-accent-600 text-[11px]">
         <summary
-          class="cursor-pointer hover:text-led transition-colors tracking-widest text-center"
+          class="cursor-pointer hover:text-accent-600 dark:hover:text-accent-400 transition-colors tracking-widest text-center"
         >
           {{ t('onboarding.supportedFormats') }}
         </summary>

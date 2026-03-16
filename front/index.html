@@ -13,35 +13,41 @@
     />
 
     <!-- Primary -->
-    <title>Bike Tracker</title>
+    <title>Bike Tracker – Tous les vélos de Paris</title>
     <meta
       name="description"
-      content="Carte temps réel des vélos et trottinettes disponibles près de vous — Lime, Voi, Dott, Vélib."
+      content="Lime, Voi, Dott et Vélib réunis sur une seule carte en temps réel. Trouvez le vélo le plus proche en quelques secondes, où que vous soyez à Paris."
     />
     <meta name="theme-color" content="#a78bfa" />
+    <meta name="author" content="Quentin Juarez" />
+    <link rel="canonical" href="https://bikes.quentinjuarez.dev" />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+    <link rel="me" href="https://www.quentinjuarez.dev" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Bike Tracker" />
     <meta
       property="og:title"
-      content="Bike Tracker – Vélos &amp; trottinettes près de vous"
+      content="Bike Tracker – Tous les vélos de Paris sur une seule carte"
     />
     <meta
       property="og:description"
-      content="Carte temps réel des vélos et trottinettes disponibles près de vous — Lime, Voi, Dott, Vélib."
+      content="Lime, Voi, Dott et Vélib réunis en temps réel. Plus besoin de jongler entre 4 applis — trouvez le vélo le plus proche en quelques secondes."
     />
-    <!-- <meta property="og:image" content="https://bike-tracker-front.vercel.app/og-image.png" /> -->
-    <meta property="og:url" content="https://bike-tracker-front.vercel.app" />
+    <meta property="og:url" content="https://bikes.quentinjuarez.dev" />
+    <meta property="og:locale" content="fr_FR" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary" />
+    <meta name="twitter:creator" content="@quentinjuarez" />
     <meta
       name="twitter:title"
-      content="Bike Tracker – Vélos &amp; trottinettes près de vous"
+      content="Bike Tracker – Tous les vélos de Paris sur une seule carte"
     />
     <meta
       name="twitter:description"
-      content="Carte temps réel des vélos et trottinettes disponibles près de vous — Lime, Voi, Dott, Vélib."
+      content="Lime, Voi, Dott et Vélib réunis en temps réel. Plus besoin de jongler entre 4 applis — trouvez le vélo le plus proche en quelques secondes."
     />
 
     <!-- iOS PWA -->
@@ -86,6 +92,35 @@
 
     <!-- PWA manifest -->
     <link rel="manifest" href="/manifest.json" />
+
+    <!-- Structured data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Bike Tracker",
+        "url": "https://bikes.quentinjuarez.dev",
+        "description": "Lime, Voi, Dott et Vélib réunis sur une seule carte en temps réel. Trouvez le vélo le plus proche en quelques secondes, où que vous soyez à Paris.",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Any",
+        "inLanguage": "fr",
+        "areaServed": {
+          "@type": "City",
+          "name": "Paris",
+          "sameAs": "https://www.wikidata.org/wiki/Q90"
+        },
+        "author": {
+          "@type": "Person",
+          "name": "Quentin Juarez",
+          "url": "https://www.quentinjuarez.dev"
+        },
+        "creator": {
+          "@type": "Person",
+          "name": "Quentin Juarez",
+          "url": "https://www.quentinjuarez.dev"
+        }
+      }
+    </script>
   </head>
   <body class="antialiased">
     <div id="app"></div>

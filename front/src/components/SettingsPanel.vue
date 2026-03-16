@@ -4,6 +4,7 @@
       <div
         v-if="open"
         class="fixed inset-0 bg-accent-500/5 dark:bg-black/10 backdrop-blur-sm z-2000"
+        @click.self="emit('close')"
       />
     </Transition>
     <Transition name="slide">

@@ -7,13 +7,14 @@ export default {
   },
   install: {
     title: 'Install the app',
-    subtitle: 'Quick access from your home screen',
+    subtitle: 'Instant access from your home screen',
     install: 'Install',
     later: 'Later',
   },
   onboarding: {
     title: 'Bike Tracker',
-    subtitle: 'Find Lime, Voi, Dott or Vélib vehicles near you.',
+    subtitle:
+      'Every Paris bike operator on one map — Lime, Voi, Dott and Vélib in real time.',
     useGps: 'Use my GPS location',
     locating: 'Locating…',
     or: 'or enter manually',

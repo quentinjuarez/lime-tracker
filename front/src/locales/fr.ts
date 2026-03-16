@@ -7,14 +7,14 @@ export default {
   },
   install: {
     title: 'Installer l’app',
-    subtitle: 'Accès rapide depuis votre écran d’accueil',
+    subtitle: 'Accès instantané depuis votre écran d’accueil',
     install: 'Installer',
     later: 'Plus tard',
   },
   onboarding: {
     title: 'Bike Tracker',
     subtitle:
-      'Trouvez des véhicules Lime, Voi, Dott ou des stations Vélib près de vous.',
+      'Tous les opérateurs parisiens sur une seule carte — Lime, Voi, Dott et Vélib en temps réel.',
     useGps: 'Utiliser ma position GPS',
     locating: 'Localisation…',
     or: 'ou entrer manuellement',

@@ -1,7 +1,7 @@
 {
-  "name": "Bike Tracker",
+  "name": "Bike Tracker – Paris",
   "short_name": "Bike Tracker",
-  "description": "Carte temps réel des vélos et trottinettes disponibles près de vous — Lime, Voi, Dott, Vélib.",
+  "description": "Lime, Voi, Dott et Vélib réunis sur une seule carte en temps réel. Trouvez le vélo le plus proche à Paris.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
